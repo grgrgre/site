@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SvityazHOME Local</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f7f9;
+        --card: #ffffff;
+        --text: #112233;
+        --muted: #5d6b78;
+        --accent: #1f6f8b;
+        --ok: #11844a;
+        --err: #b02a2a;
+        --border: #d9e2e8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px 16px 48px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 1.8rem;
+      }
+      .lead {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 14px;
+      }
+      .links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 10px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        color: var(--text);
+        text-decoration: none;
+        background: #fff;
+        font-weight: 600;
+      }
+      .btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+      }
+      .status-item {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+      }
+      .status-item h3 {
+        margin: 0 0 8px;
+        font-size: 0.95rem;
+      }
+      .ok { color: var(--ok); }
+      .err { color: var(--err); }
+      code {
+        background: #eef3f6;
+        border-radius: 6px;
+        padding: 2px 6px;
+      }
+      .muted { color: var(--muted); font-size: 0.92rem; }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <h1>SvityazHOME Local Starter</h1>
+      <p class="lead">
+        Локальний запуск і швидка діагностика. Основний env тепер тільки один: <code>.env</code>.
+      </p>
+
+      <section class="card">
+        <h2>Швидкі посилання</h2>
+        <div class="links">
+          <a class="btn btn-primary" href="/">Головна</a>
+          <a class="btn" href="/booking/">Бронювання</a>
+          <a class="btn" href="/rooms/">Номери</a>
+          <a class="btn" href="/reviews/">Відгуки</a>
+          <a class="btn" href="/svh-ctrl-x7k9/">Адмінка</a>
+          <a class="btn" href="/local.html">Оновити Local</a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Стан API</h2>
+        <p class="muted">
+          Якщо тут <span class="ok">OK</span>, локальний сервер і роутинг працюють коректно.
+        </p>
+        <div class="status-grid">
+          <article class="status-item">
+            <h3>/api/access.php?action=status</h3>
+            <div id="status-access">Перевірка...</div>
+          </article>
+          <article class="status-item">
+            <h3>/api/rooms.php?action=list</h3>
+            <div id="status-rooms">Перевірка...</div>
+          </article>
+          <article class="status-item">
+            <h3>/api/reviews.php</h3>
+            <div id="status-reviews">Перевірка...</div>
+          </article>
+          <article class="status-item">
+            <h3>/api/policy.php</h3>
+            <div id="status-policy">Перевірка...</div>
+          </article>
+        </div>
+        <p style="margin-top: 12px;">
+          <button class="btn" id="refreshBtn" type="button">Оновити перевірку</button>
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Нотатка</h2>
+        <p class="muted">
+          Запуск локально: <code>./localhost.sh</code> (Linux) або <code>localhost.bat</code> (Windows).
+          Скрипт відкриває цю сторінку автоматично.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      async function checkEndpoint(url, targetId) {
+        const node = document.getElementById(targetId);
+        if (!node) return;
+        node.textContent = 'Перевірка...';
+        node.className = '';
+        try {
+          const res = await fetch(url, { credentials: 'same-origin' });
+          const status = res.status;
+          if (res.ok) {
+            node.textContent = `OK (${status})`;
+            node.className = 'ok';
+          } else {
+            node.textContent = `Помилка (${status})`;
+            node.className = 'err';
+          }
+        } catch (err) {
+          node.textContent = 'Помилка зʼєднання';
+          node.className = 'err';
+        }
+      }
+
+      function runChecks() {
+        checkEndpoint('/api/access.php?action=status', 'status-access');
+        checkEndpoint('/api/rooms.php?action=list', 'status-rooms');
+        checkEndpoint('/api/reviews.php', 'status-reviews');
+        checkEndpoint('/api/policy.php', 'status-policy');
+      }
+
+      document.getElementById('refreshBtn')?.addEventListener('click', runChecks);
+      runChecks();
+    </script>
+  </body>
+</html>

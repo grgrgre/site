@@ -1,0 +1,44 @@
+{
+    "id": 8,
+    "title": "Номер 8",
+    "summary": "Люкс номер з елегантним дизайном та сучасним комфортом. WiFi, зручності, 5-10 хв до пляжу.",
+    "description": "Вишуканий номер люкс класу з особливим шармом. Оснащений:\n- Подвійна спальня з преміум матрацом\n-\n Люкс ванна кімната з гарячою водою та якісною косметикою\n- Климат-контроль\n- 50' Smart TV та\n потоковим контентом\n- Швидкий Wi-Fi та USB розетки\n- Мінібар та холодна вода\n- Балкон з видом\n на\n територію",
+    "type": "lux",
+    "capacity": 4,
+    "guests": 4,
+    "pricePerNight": 1600,
+    "price": "1600 грн",
+    "amenities": [
+        "Wi-Fi",
+        "Кондиціонер",
+        "Smart TV",
+        "Люкс ванна",
+        "Балкон",
+        "Мінібар",
+        "Premium матрац",
+        "Рушники та постільна білизна"
+    ],
+    "rules": [
+        "Заселення з 14:00, виселення до 11:00",
+        "Максимально 4 гості",
+        "Паління заборонено",
+        "Шум на території заборонено після 22:00",
+        "Домашні тварини за домовленістю"
+    ],
+    "images": [
+        "/storage/uploads/rooms/room-8/cover.webp",
+        "/storage/uploads/rooms/room-8/room-8-bathroom-black-towel-hook-rack-on-patterned-tile-wall.webp",
+        "/storage/uploads/rooms/room-8/room-8-bathroom-oval-illuminated-mirror-and-sink.webp",
+        "/storage/uploads/rooms/room-8/room-8-bedroom-black-wall-sconce-on-wood-wall.webp",
+        "/storage/uploads/rooms/room-8/room-8-bedroom-grey-sofa-and-dark-chandelier.webp",
+        "/storage/uploads/rooms/room-8/room-8-dining-area-grey-table-and-bright-orange-chairs.webp",
+        "/storage/uploads/rooms/room-8/room-8-door-photo.webp",
+        "/storage/uploads/rooms/room-8/room-8-interior-open-white-door-view-to-kitchen.webp",
+        "/storage/uploads/rooms/room-8/room-8-interior-potted-plant-on-wooden-cabinet.webp",
+        "/storage/uploads/rooms/room-8/room-8-kitchen-black-round-sink-and-chrome-faucet.webp",
+        "/storage/uploads/rooms/room-8/room-8-kitchen-orange-mugs-on-metal-shelf.webp",
+        "/storage/uploads/rooms/room-8/room-8-kitchen-orange-orchid-pot-on-fridge.webp",
+        "/storage/uploads/rooms/room-8/room-8-kitchen-white-cabinets-with-blue-kettle-and-stove.webp"
+    ],
+    "cover": "/storage/uploads/rooms/room-8/cover.webp"
+}

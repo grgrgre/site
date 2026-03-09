@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Немає з'єднання | SvityazHOME</title>
+  <style>
+    :root {
+      --bg: #f8f5ef;
+      --surface: #ffffff;
+      --text: #1d2926;
+      --muted: #556461;
+      --accent: #4f7b63;
+      --border: rgba(29, 41, 38, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(560px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 12px 36px rgba(24, 36, 32, 0.12);
+    }
+    h1 { margin: 0 0 12px; font-size: 1.6rem; }
+    p { margin: 0 0 16px; color: var(--muted); line-height: 1.6; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .btn.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Немає з'єднання з інтернетом</h1>
+    <p>Сторінка тимчасово недоступна. Спробуйте оновити її або повернутись на головну, коли з'єднання відновиться.</p>
+    <div class="actions">
+      <button class="btn" type="button" onclick="location.reload()">Оновити сторінку</button>
+      <a class="btn secondary" href="/">На головну</a>
+    </div>
+  </main>
+</body>
+</html>

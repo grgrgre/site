@@ -1,0 +1,37 @@
+# Core hardening rules for Apache deployments.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Canonical host: always redirect www -> non-www.
+    RewriteCond %{HTTP_HOST} ^www\.svityazhome\.com\.ua$ [NC]
+    RewriteRule ^ https://svityazhome.com.ua%{REQUEST_URI} [R=301,L,NE]
+
+    # Enforce HTTPS for production hostname (supports reverse proxy setups).
+    RewriteCond %{HTTP_HOST} ^(?:www\.)?svityazhome\.com\.ua$ [NC]
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+    RewriteRule ^ https://svityazhome.com.ua%{REQUEST_URI} [R=301,L,NE]
+
+    # Block dotfiles except ACME challenge files.
+    RewriteCond %{REQUEST_URI} !^/\.well-known/ [NC]
+    RewriteRule (^|/)\. - [F,L]
+
+    # Block accidental archive/db dumps in web root.
+    RewriteCond %{REQUEST_URI} ^/[^/]+\.(zip|tar|gz|tgz|7z|bak|old|sql|sqlite|db)$ [NC]
+    RewriteRule ^ - [F,L]
+
+    # Block direct access to private storage data.
+    RewriteCond %{REQUEST_URI} ^/storage/backups/ [NC]
+    RewriteRule ^ - [F,L]
+    RewriteCond %{REQUEST_URI} ^/storage/data/ [NC]
+    RewriteRule ^ - [F,L]
+</IfModule>
+
+<IfModule mod_setenvif.c>
+    SetEnvIfNoCase Request_URI "^/svh-ctrl-x7k9/" svh_admin_ui=1
+</IfModule>
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive" env=svh_admin_ui
+</IfModule>

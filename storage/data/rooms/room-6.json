@@ -1,0 +1,48 @@
+{
+    "id": 6,
+    "title": "Номер 6",
+    "summary": "Елегантний люкс номер з панорамним видом для пар та невеликих сімей. WiFi, зручності, 5-10 хв до пляжу.",
+    "description": "Преміальний номер люкс класу з сучасним дизайном. Оснащений:\n- Зручні спальні місця\n- Гостинна\n зона\n з м'якими меблями\n- Ванна кімната з гарячою водою та косметичними засобами\n- Климат-контроль з\n регулюванням температури\n- 50' Smart TV та HD каналами\n- Швидкий Wi-Fi та USB розетки\n- Мінібар\n з\n холодними напитками\n- Балкон або тераса",
+    "type": "lux",
+    "capacity": 4,
+    "guests": 4,
+    "pricePerNight": 1600,
+    "price": "1600 грн",
+    "amenities": [
+        "Wi-Fi",
+        "Кондиціонер",
+        "Smart TV",
+        "Приватна ванна",
+        "Балкон/Тераса",
+        "Мінібар",
+        "Косметичні засоби",
+        "Рушники та постільна білизна"
+    ],
+    "rules": [
+        "Заселення з 14:00, виселення до 11:00",
+        "Максимально 4 гості",
+        "Паління заборонено",
+        "Шум на території заборонено після 22:00",
+        "Домашні тварини тільки за домовленістю"
+    ],
+    "images": [
+        "/storage/uploads/rooms/room-6/cover.webp",
+        "/storage/uploads/rooms/room-6/room-6-bathroom-chrome-faucet-and-white-sink-close-up.webp",
+        "/storage/uploads/rooms/room-6/room-6-bathroom-sink-with-white-mirror-and-blue-tiles.webp",
+        "/storage/uploads/rooms/room-6/room-6-bedroom-white-wooden-headboard-with-carved-ornament.webp",
+        "/storage/uploads/rooms/room-6/room-6-dining-area-round-woven-jute-placemat-on-white-table.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-black-chair-shaped-wall-hooks.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-blue-patterned-rug-on-distressed-wood-floor.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-dried-crimson-flowers-in-glass-vase-on-woven-placemat.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-hanging-potted-plant-in-blue-macrame.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-view-through-door-to-dining-area-with-white-furniture.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-vintage-floral-wall-clock-on-white-brick-wall.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-white-cage-style-pendant-light-with-bird-figures.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-white-door-with-decorative-x-pattern-and-floral-studs.webp",
+        "/storage/uploads/rooms/room-6/room-6-interior-white-lace-curtain-with-floral-pattern.webp",
+        "/storage/uploads/rooms/room-6/room-6-kitchen-cat-themed-wall-art-with-mug-hooks.webp",
+        "/storage/uploads/rooms/room-6/room-6-kitchen-white-cabinets-with-glass-inserts-and-decorative-carving.webp",
+        "/storage/uploads/rooms/room-6/room-6-living-area-sofa-with-teal-pillows-and-brick-wall.webp"
+    ],
+    "cover": "/storage/uploads/rooms/room-6/cover.webp"
+}

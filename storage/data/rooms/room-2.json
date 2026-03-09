@@ -1,0 +1,42 @@
+{
+    "id": 2,
+    "title": "Номер 2",
+    "summary": "Світлий люкс номер з видом на зелену територію, ідеальний для пар та невеликих груп. WiFi, зручності, 5-10 хв до пляжу.",
+    "description": "Просторий номер люкс класу з панорамним вікном на територію. Оснащений:\n- Подвійне спальне\n місце\n-\n Окремий робочий стіл\n- Приватна ванна з гарячою водою\n- Климат-контроль\n- Smart TV та Premium\n Wi-Fi\n- Мінібар та кофемашина\n- Балкон",
+    "type": "lux",
+    "capacity": 3,
+    "guests": 3,
+    "pricePerNight": 1200,
+    "price": "1200 грн",
+    "amenities": [
+        "Wi-Fi",
+        "Кондиціонер",
+        "Телевізор",
+        "Приватна ванна",
+        "Балкон",
+        "Мінібар",
+        "Кофемашина",
+        "Рушники та постільна білизна"
+    ],
+    "rules": [
+        "Заселення з 14:00, виселення до 11:00",
+        "Максимально 3 гості",
+        "Паління заборонено",
+        "Шум на території заборонено після 22:00",
+        "Домашні тварини тільки за домовленістю"
+    ],
+    "images": [
+        "/storage/uploads/rooms/room-2/cover.webp",
+        "/storage/uploads/rooms/room-2/room-2-bathroom-tiles-ancient-city-architecture-design.webp",
+        "/storage/uploads/rooms/room-2/room-2-bathroom-white-ceramic-sink-chrome-faucet.webp",
+        "/storage/uploads/rooms/room-2/room-2-bedroom-bed-pillows-lace-curtains.webp",
+        "/storage/uploads/rooms/room-2/room-2-bedroom-chandelier-vintage-design-wooden-ceiling.webp",
+        "/storage/uploads/rooms/room-2/room-2-flower-pot-pink-roses-wooden-table.webp",
+        "/storage/uploads/rooms/room-2/room-2-kids-bunk-bed-house-wooden-interior.webp",
+        "/storage/uploads/rooms/room-2/room-2-kitchen-dining-table-placemats.webp",
+        "/storage/uploads/rooms/room-2/room-2-kitchen-dining-table-wooden-chairs.webp",
+        "/storage/uploads/rooms/room-2/room-2-kitchen-wall-decor-birdcage-flower-hooks.webp",
+        "/storage/uploads/rooms/room-2/room-2bathroom-round-mirror-wooden-frame-decorative-object.webp"
+    ],
+    "cover": "/storage/uploads/rooms/room-2/cover.webp"
+}

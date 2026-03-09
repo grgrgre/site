@@ -1,0 +1,48 @@
+{
+    "id": 4,
+    "title": "Номер 4",
+    "summary": "Затишний номер для двох на території біля озера. WiFi, зручності, 5-10 хв до пляжу.",
+    "description": "Компактний, але комфортний номер для пари. Включає:\n- Подвійне спальне місце\n- Приватна ванна\n кімната\n- Все необхідне для гігієни та комфорту\n- Телевізор та Wi-Fi\n- Вентиляція\n- Вихід в\n терасу",
+    "type": "standard",
+    "capacity": 2,
+    "guests": 2,
+    "pricePerNight": 900,
+    "price": "900 грн",
+    "amenities": [
+        "Wi-Fi",
+        "Телевізор",
+        "Приватна ванна",
+        "Тераса",
+        "Фен",
+        "Рушники та постільна білизна"
+    ],
+    "rules": [
+        "Заселення з 14:00, виселення до 11:00",
+        "Максимально 2 гості",
+        "Паління заборонено",
+        "Шум на території заборонено після 22:00"
+    ],
+    "images": [
+        "/storage/uploads/rooms/room-4/cover.webp",
+        "/storage/uploads/rooms/room-4/room-4-bathroom-mirror-shelf-flower-decor.webp",
+        "/storage/uploads/rooms/room-4/room-4-bathroom-round-mirror-reflection.webp",
+        "/storage/uploads/rooms/room-4/room-4-bathroom-wall-hook-rack.webp",
+        "/storage/uploads/rooms/room-4/room-4-bedroom-bunk-bed-ladder-detail.webp",
+        "/storage/uploads/rooms/room-4/room-4-bedroom-interior-beds-window-view.webp",
+        "/storage/uploads/rooms/room-4/room-4-bedroom-wooden-bunk-bed-interior.webp",
+        "/storage/uploads/rooms/room-4/room-4-interior-blue-door-design.webp",
+        "/storage/uploads/rooms/room-4/room-4-interior-details-embroidered-textile-decor.webp",
+        "/storage/uploads/rooms/room-4/room-4-interior-white-classic-chandelier.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-christmas-wall-decor-god-jul.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-dining-table-light-blue-placemats.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-flowers-vase-interior-details.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-flowers-vase-table-detail.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-shelf-dishes-plates.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-shelf-glasses-spice-jars.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-sink-faucet-interior.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-table-vases-placemats.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-white-cabinets-microwave-appliances.webp",
+        "/storage/uploads/rooms/room-4/room-4-kitchen-wooden-wall-black-metal-hanger.webp"
+    ],
+    "cover": "/storage/uploads/rooms/room-4/cover.webp"
+}

@@ -1,0 +1,42 @@
+{
+    "id": 5,
+    "title": "Номер 5",
+    "summary": "Просторий люкс номер для невеликої сім'ї з усіма зручностями. WiFi, зручності, 5-10 хв до пляжу.",
+    "description": "Розкішний номер люкс класу для 4 гостей з повним спектром послуг. Передбачає:\n- 2 спальні місця\n-\n Просторий салон\n- Ванна кімната з ванною та душем\n- Климат-контроль\n- Smart TV та Premium\n Wi-Fi\n- Мінібар та чайник\n- Робочий стіл\n- Вихід на балкон",
+    "type": "lux",
+    "capacity": 4,
+    "guests": 4,
+    "pricePerNight": 1600,
+    "price": "1600 грн",
+    "amenities": [
+        "Wi-Fi",
+        "Кондиціонер",
+        "Телевізор",
+        "Ванна та душ",
+        "Балкон",
+        "Мінібар",
+        "Робочий стіл",
+        "Рушники та постільна білизна"
+    ],
+    "rules": [
+        "Заселення з 14:00, виселення до 11:00",
+        "Максимально 4 гості",
+        "Паління заборонено",
+        "Шум на території заборонено після 22:00",
+        "Домашні тварини за домовленістю"
+    ],
+    "images": [
+        "/storage/uploads/rooms/room-5/cover.webp",
+        "/storage/uploads/rooms/room-5/room-5-bathroom-shower-head-and-glass-shelf-on-white-tiles.webp",
+        "/storage/uploads/rooms/room-5/room-5-bathroom-terrazzo-tile-texture-close-up.webp",
+        "/storage/uploads/rooms/room-5/room-5-bedroom-bed-frame-corner-with-blue-x-design.webp",
+        "/storage/uploads/rooms/room-5/room-5-bedroom-white-bed-with-blue-accents-and-patterned-rug.webp",
+        "/storage/uploads/rooms/room-5/room-5-dining-area-white-table-with-blue-chairs-and-sunburst-wall-mirrors.webp",
+        "/storage/uploads/rooms/room-5/room-5-interior-blue-x-back-chair-detail.webp",
+        "/storage/uploads/rooms/room-5/room-5-interior-dried-reeds-in-geometric-blue-vase.webp",
+        "/storage/uploads/rooms/room-5/room-5-interior-gold-sunburst-wall-clock-close-up.webp",
+        "/storage/uploads/rooms/room-5/room-5-interior-red-tulips-in-blue-swirl-glass-vase.webp",
+        "/storage/uploads/rooms/room-5/room-5-kitchen-blue-cabinets-with-black-handles-and-yellow-kettle.webp"
+    ],
+    "cover": "/storage/uploads/rooms/room-5/cover.webp"
+}

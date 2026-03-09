@@ -1,0 +1,6 @@
+# SvityazHOME autonomy cron example
+# 1) Replace /opt/svityazhome with your real project path
+# 2) Install via: crontab deploy/autonomy-cron.example
+
+*/10 * * * * cd "/opt/svityazhome" && /usr/bin/env bash "/opt/svityazhome/tools/autonomy.sh" check >> "/opt/svityazhome/.local/autonomy-check.log" 2>&1
+17 3 * * * cd "/opt/svityazhome" && /usr/bin/env bash "/opt/svityazhome/tools/autonomy.sh" nightly >> "/opt/svityazhome/.local/autonomy-nightly.log" 2>&1

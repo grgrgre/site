@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Заборонити індексацію службових папок
+Disallow: /api/
+Disallow: /svh-ctrl-x7k9/
+Disallow: /storage/
+Disallow: /_dev_archives/
+
+Sitemap: https://svityazhome.com.ua/sitemap.xml

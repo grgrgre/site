@@ -1,0 +1,36 @@
+# Захист папки storage від прямого доступу
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Блокуємо доступ до backup-архівів напряму
+    RewriteCond %{REQUEST_URI} ^/storage/backups/ [NC]
+    RewriteRule ^ - [F,L]
+    RewriteCond %{REQUEST_URI} ^/storage/backups/.*\.zip$ [NC]
+    RewriteRule ^ - [F,L]
+
+    # Блокуємо прямий доступ до всіх файлів data (JSON, SQLite, тощо).
+    RewriteCond %{REQUEST_URI} ^/storage/data/ [NC]
+    RewriteRule ^ - [F,L]
+
+    # Дозволяємо доступ до зображень у storage/uploads.
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|webp|avif)$ [NC]
+    RewriteRule ^ - [L]
+</IfModule>
+
+# Блокуємо доступ до бази даних напряму
+<FilesMatch "\.(db|sqlite|sql|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+# Забороняємо листинг директорії
+Options -Indexes
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+</IfModule>

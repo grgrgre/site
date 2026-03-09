@@ -1,0 +1,46 @@
+{
+    "id": 11,
+    "title": "Номер 11",
+    "summary": "Вишуканий люкс номер для пари або невеликої сім'ї. WiFi, зручності, 5-10 хв до пляжу.",
+    "description": "Елегантний номер люкс класу з сучасними зручностями. Передбачає:\n- Комфортна спальня\n- Окремий\n робочий стіл\n- Люкс ванна кімната\n- Климат-контроль\n- 50' Smart TV\n- Швидкий Wi-Fi\n-\n Мінібар та чайник\n- Балкон",
+    "type": "lux",
+    "capacity": 4,
+    "guests": 4,
+    "pricePerNight": 1600,
+    "price": "1600 грн",
+    "amenities": [
+        "Wi-Fi",
+        "Кондиціонер",
+        "Smart TV",
+        "Люкс ванна",
+        "Балкон",
+        "Мінібар",
+        "Робочий стіл",
+        "Рушники та постільна білизна"
+    ],
+    "rules": [
+        "Заселення з 14:00, виселення до 11:00",
+        "Максимально 4 гості",
+        "Паління заборонено",
+        "Шум на території заборонено після 22:00",
+        "Домашні тварини за домовленістю"
+    ],
+    "images": [
+        "/storage/uploads/rooms/room-11/bathroom-11-main.webp",
+        "/storage/uploads/rooms/room-11/bathroom-11-sink.webp",
+        "/storage/uploads/rooms/room-11/bathroom-11.webp",
+        "/storage/uploads/rooms/room-11/cover.webp",
+        "/storage/uploads/rooms/room-11/room-11-bathroom-glass-vessel-sink-top-view.webp",
+        "/storage/uploads/rooms/room-11/room-11-bathroom-metal-towel-rack-with-hooks.webp",
+        "/storage/uploads/rooms/room-11/room-11-bathroom-round-led-mirror-and-glass-sink.webp",
+        "/storage/uploads/rooms/room-11/room-11-bedroom-door-decorative-carved-rosette.webp",
+        "/storage/uploads/rooms/room-11/room-11-bedroom-lavender-curtains-and-balcony-view.webp",
+        "/storage/uploads/rooms/room-11/room-11-bedroom-lavender-print-curtains-detail.webp",
+        "/storage/uploads/rooms/room-11/room-11-bedroom-macrame-pendant-light-and-lavender-curtains.webp",
+        "/storage/uploads/rooms/room-11/room-8-door.webp",
+        "/storage/uploads/rooms/room-11/sleeproom-11-main-2.webp",
+        "/storage/uploads/rooms/room-11/sleeproom-11-main.webp",
+        "/storage/uploads/rooms/room-11/sleeproom-11-window.webp"
+    ],
+    "cover": "/storage/uploads/rooms/room-11/bathroom-11-main.webp"
+}

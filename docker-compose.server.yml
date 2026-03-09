@@ -1,0 +1,37 @@
+services:
+  web:
+    image: nginx:1.27-alpine
+    container_name: svh-web
+    depends_on:
+      - php
+    ports:
+      - "${SERVER_HTTP_PORT:-8080}:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./storage:/var/www/html/storage
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  php:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: svh-php
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:ro
+      - ./storage:/var/www/html/storage
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/zz-svh.ini:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

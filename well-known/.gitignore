@@ -1,0 +1,33 @@
+# Python caches
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local environment secrets
+.env
+.env.*
+!.env.example
+
+# Local runtime and temp
+.local/
+*.log
+*.tmp
+*.swp
+
+# Backup and sensitive artifacts
+*.zip
+*.tar
+*.gz
+*.tgz
+*.7z
+*.bak
+*.old
+*.sql
+*.sqlite
+*.db
+
+# Storage internals
+storage/backups/
+storage/logs/

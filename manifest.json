@@ -1,0 +1,44 @@
+{
+  "name": "SvityazHOME — Відпочинок біля озера Світязь",
+  "short_name": "SvityazHOME",
+  "description": "Затишна сімейна садиба біля озера Світязь. Комфортні номери для 2-8 гостей, зелена територія, BBQ та Wi-Fi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf9f6",
+  "theme_color": "#2d7a8c",
+  "orientation": "portrait-primary",
+  "lang": "uk",
+  "icons": [
+    {
+      "src": "/assets/images/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/images/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/images/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/images/favicon/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["travel", "lifestyle"],
+  "prefer_related_applications": false
+}

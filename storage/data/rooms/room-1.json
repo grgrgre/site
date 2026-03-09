@@ -1,0 +1,45 @@
+{
+    "id": 1,
+    "title": "Номер 1",
+    "summary": "Світлий і просторий номер на 3 гостей для спокійного відпочинку біля Світязя. WiFi, зручності, 5-10 хв до пляжу.",
+    "description": "Комфортний номер люкс класу, оснащений усім необхідним для комфортного проживання. Включає:\n- Зручне\n спальне місце для 3 гостей\n- Приватна ванна кімната з душем\n- Кондиціонер та опалення\n- Smart\n TV\n та Wi-Fi\n- Міні-холодильник та чайник\n- Балкон з видом на територію",
+    "type": "lux",
+    "capacity": 3,
+    "guests": 3,
+    "pricePerNight": 1200,
+    "price": "1200 грн",
+    "amenities": [
+        "Wi-Fi",
+        "Кондиціонер",
+        "Телевізор",
+        "Приватна ванна",
+        "Балкон",
+        "Міні-холодильник",
+        "Фен",
+        "Рушники та постільна білизна"
+    ],
+    "rules": [
+        "Заселення з 14:00, виселення до 11:00",
+        "Максимально 3 гості",
+        "Паління заборонено",
+        "Шум на території заборонено після 22:00",
+        "Домашні тварини тільки за домовленістю"
+    ],
+    "images": [
+        "/storage/uploads/rooms/room-1/cover.webp",
+        "/storage/uploads/rooms/room-1/room-1-bathroom-black-marble-tiles-blue-curtain.webp",
+        "/storage/uploads/rooms/room-1/room-1-bathroom-white-sink-chrome-faucet.webp",
+        "/storage/uploads/rooms/room-1/room-1-bathroom-white-tiles-round-mirror.webp",
+        "/storage/uploads/rooms/room-1/room-1-bedroom-metal-bed-blue-pillows-grey-blanket.webp",
+        "/storage/uploads/rooms/room-1/room-1-bedroom-metal-bed-wooden-walls-picture.webp",
+        "/storage/uploads/rooms/room-1/room-1-bedroom-metal-bed-wooden-walls.webp",
+        "/storage/uploads/rooms/room-1/room-1-bedroom-wooden-ceiling-black-loft-lamp.webp",
+        "/storage/uploads/rooms/room-1/room-1-bedroom-wooden-walls-shelves.webp",
+        "/storage/uploads/rooms/room-1/room-1-blue-wooden-chairs-close-up-cushion-ties.webp",
+        "/storage/uploads/rooms/room-1/room-1-dining-table-blue-chairs-vase-dried-flowers.webp",
+        "/storage/uploads/rooms/room-1/room-1-dried-flowers-blue-vase-wooden-wall.webp",
+        "/storage/uploads/rooms/room-1/room-1-dried-flowers-glass-vase-wooden-interior.webp",
+        "/storage/uploads/rooms/room-1/room-1-white-ceramic-cups-stand-kitchen-interior.webp"
+    ],
+    "cover": "/storage/uploads/rooms/room-1/cover.webp"
+}

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="uk">
+
+  <head>
+    <meta charset="UTF-8">
+    <script>(function () { try { var t = localStorage.getItem('theme'); if (t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme:dark)').matches)) { document.documentElement.setAttribute('data-theme', 'dark') } } catch (e) { } })()</script>
+    <meta name="google-site-verification" content="6zL_DxAEdwOlALvjMBkzuhU_novzEasXniAutEgTu3k">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сторінку не знайдено — SvityazHOME</title>
+    <meta name="description" content="На жаль, сторінку не знайдено. Поверніться на головну SvityazHOME.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2d7a8c">
+    <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400..700&display=swap"
+      rel="stylesheet">
+    <link rel="preload" href="/assets/css/styles.min.css" as="style">
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
+    <style>
+      .error-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .error-page__code {
+        font-size: clamp(6rem, 20vw, 12rem);
+        font-weight: 700;
+        color: var(--accent);
+        line-height: 1;
+        margin-bottom: 1rem;
+      }
+
+      .error-page__title {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        margin-bottom: 1rem;
+        color: var(--heading);
+      }
+
+      .error-page__text {
+        color: var(--muted);
+        max-width: 400px;
+        margin-bottom: 2rem;
+      }
+
+      .error-page__actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MHTVH59XZD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-MHTVH59XZD');
+    </script>
+  </head>
+
+  <body data-page="error" class="page-error">
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a class="brand" href="/"><span class="brand__dot"></span> SvityazHOME</a>
+        <nav class="nav">
+          <div class="nav__links" id="navLinks">
+            <a class="nav__link" href="/">Головна</a>
+            <a class="nav__link" href="/rooms/">Номери</a>
+            <a class="nav__link" href="/gallery/">Галерея</a>
+            <a class="nav__link" href="/booking/">Бронювання</a>
+          </div>
+          <div class="nav__cta">
+            <a class="btn btn-sm btn-primary" href="/booking/">Забронювати</a>
+          </div>
+          <button class="nav-toggle" aria-label="Меню" aria-expanded="false">
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+          </button>
+          <button class="theme-toggle" aria-label="Перемкнути тему">
+            <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+            <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="error-page">
+      <div class="error-page__code">404</div>
+      <h1 class="error-page__title">Сторінку не знайдено</h1>
+      <p class="error-page__text">
+        На жаль, сторінка, яку ви шукаєте, не існує або була переміщена.
+        Спробуйте повернутися на головну або скористайтеся навігацією.
+      </p>
+      <div class="error-page__actions">
+        <a class="btn btn-primary" href="/">На головну</a>
+        <a class="btn btn-ghost" href="/rooms/">Переглянути номери</a>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__bottom">
+        <p>© 2026 SvityazHOME. Усі права захищено.</p>
+      </div>
+    </footer>
+    <script src="/assets/js/app.js" defer></script>
+    <script>
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () {
+          var s = document.createElement('script');
+          s.src = '/assets/js/easter-egg.js';
+          document.body.appendChild(s);
+        });
+      } else {
+        window.addEventListener('load', function () {
+          var s = document.createElement('script');
+          s.src = '/assets/js/easter-egg.js';
+          document.body.appendChild(s);
+        });
+      }
+    </script>
+  </body>
+
+</html>

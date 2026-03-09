@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="uk">
+
+  <head>
+    <meta charset="UTF-8">
+    <script>(function () { try { var t = localStorage.getItem('theme'); if (t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme:dark)').matches)) { document.documentElement.setAttribute('data-theme', 'dark') } } catch (e) { } })()</script>
+    <meta name="google-site-verification" content="6zL_DxAEdwOlALvjMBkzuhU_novzEasXniAutEgTu3k">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бронювання — SvityazHOME | Забронювати номер біля Світязя</title>
+    <meta name="description"
+      content="Забронюйте номер у садибі SvityazHOME біля озера Світязь. Телефонуйте +380 93 857 85 40 або пишіть на booking@svityazhome.com.ua">
+    <link rel="canonical" href="https://svityazhome.com.ua/booking/">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Головна",
+            "item": "https://svityazhome.com.ua/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Бронювання",
+            "item": "https://svityazhome.com.ua/booking/"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://svityazhome.com.ua/booking/">
+    <meta property="og:title" content="Бронювання — SvityazHOME">
+    <meta property="og:description" content="Забронюйте номер у садибі SvityazHOME біля озера Світязь.">
+    <meta property="og:image"
+      content="https://svityazhome.com.ua/storage/uploads/yard/exterior-modern-house-fountain-hanging-chair.webp">
+    <meta property="og:locale" content="uk_UA">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2d7a8c">
+    <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png">
+
+    <!-- Preconnect for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400..700&display=swap"
+      rel="stylesheet">
+    <link rel="preload" href="/assets/css/styles.min.css" as="style">
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
+    <style>
+      img,
+      video,
+      canvas,
+      svg {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Оптимізація завантаження зображень */
+      img[loading="lazy"] {
+        background: #f0f0f0;
+      }
+
+      .booking-request-layout {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+      }
+
+      .booking-consent {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .booking-consent input[type="checkbox"] {
+        margin-top: 4px;
+      }
+
+      .booking-honeypot {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      .booking-request-id {
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .message.success {
+        border-color: var(--forest);
+        color: var(--text);
+        background: color-mix(in srgb, var(--forest) 10%, var(--surface-2));
+      }
+
+      #bookingSubmitButton[aria-busy="true"] {
+        cursor: wait;
+        opacity: 0.85;
+      }
+
+      .booking-privacy-list {
+        margin: 12px 0 0;
+        padding-left: 18px;
+        line-height: 1.7;
+      }
+
+      .booking-choice-block {
+        display: grid;
+        gap: 10px;
+      }
+
+      .booking-choice-label {
+        margin: 0;
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .booking-chip-grid {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .booking-chip {
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text);
+        font-weight: 600;
+        min-height: 42px;
+        padding: 8px 10px;
+        cursor: pointer;
+        transition: transform var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease);
+      }
+
+      .booking-chip:hover {
+        transform: translateY(-1px);
+        border-color: var(--border-accent);
+      }
+
+      .booking-chip.is-active {
+        border-color: var(--forest);
+        background: color-mix(in srgb, var(--forest) 10%, var(--surface));
+        box-shadow: 0 10px 22px -16px rgba(63, 101, 80, 0.7);
+      }
+
+      .booking-chip:disabled {
+        opacity: 0.48;
+        cursor: not-allowed;
+      }
+
+      .booking-room-filters {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .booking-room-grid {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .booking-room-btn {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        color: var(--text);
+        min-height: 62px;
+        padding: 8px 10px;
+        cursor: pointer;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 2px;
+        transition: transform var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease);
+      }
+
+      .booking-room-btn strong {
+        font-size: 0.95rem;
+        line-height: 1.1;
+      }
+
+      .booking-room-btn small {
+        color: var(--muted);
+        line-height: 1.1;
+      }
+
+      .booking-room-btn:hover {
+        transform: translateY(-1px);
+        border-color: var(--border-accent);
+      }
+
+      .booking-room-btn.is-active {
+        border-color: var(--forest);
+        background: color-mix(in srgb, var(--forest) 10%, var(--surface));
+        box-shadow: 0 10px 22px -16px rgba(63, 101, 80, 0.7);
+      }
+
+      .booking-room-empty {
+        grid-column: 1 / -1;
+        border: 1px dashed var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        color: var(--muted);
+        text-align: center;
+        background: var(--surface-2);
+      }
+
+      .booking-privacy-trigger {
+        margin-top: 4px;
+      }
+
+      .booking-optional-block {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface-2);
+        padding: 12px 14px;
+      }
+
+      .booking-optional-block summary {
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .booking-optional-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .booking-choice-selects {
+        margin-top: 12px;
+      }
+
+      .booking-choice-selects summary {
+        font-size: 0.86rem;
+      }
+
+      @media (max-width: 900px) {
+        .booking-request-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .booking-room-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .booking-chip-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .booking-room-filters {
+          grid-template-columns: 1fr;
+        }
+
+        .booking-room-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MHTVH59XZD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-MHTVH59XZD');
+    </script>
+  </head>
+
+  <body data-page="booking" class="page-booking">
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a class="brand" href="/"><span class="brand__dot"></span> SvityazHOME</a>
+        <nav class="nav">
+          <div class="nav__links" id="navLinks">
+            <a class="nav__link" data-nav="home" href="/">Головна</a>
+            <a class="nav__link" data-nav="about" href="/about/">Про нас</a>
+            <a class="nav__link" data-nav="gallery" href="/gallery/">Галерея</a>
+            <a class="nav__link" data-nav="lake" href="/ozero-svityaz/">Озеро Світязь</a>
+            <a class="nav__link" data-nav="reviews" href="/reviews/">Відгуки</a>
+            <details class="nav__dropdown">
+              <summary class="nav__link nav__link--dropdown" data-nav="rooms">
+                Номери
+                <span class="nav__chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="nav__dropdown-menu">
+                <a class="nav__dropdown-all" href="/rooms/">Усі номери</a>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Двомісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-4/">Номер 4</a>
+                    <a href="/rooms/room-14/">Номер 14</a>
+                    <a href="/rooms/room-15/">Номер 15</a>
+                    <a href="/rooms/room-16/">Номер 16</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Тримісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-1/">Номер 1</a>
+                    <a href="/rooms/room-2/">Номер 2</a>
+                    <a href="/rooms/room-17/">Номер 17</a>
+                    <a href="/rooms/room-18/">Номер 18</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Чотиримісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-3/">Номер 3</a>
+                    <a href="/rooms/room-5/">Номер 5</a>
+                    <a href="/rooms/room-6/">Номер 6</a>
+                    <a href="/rooms/room-7/">Номер 7</a>
+                    <a href="/rooms/room-8/">Номер 8</a>
+                    <a href="/rooms/room-11/">Номер 11</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Двоярусні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-9/">Номер 9</a>
+                    <a href="/rooms/room-10/">Номер 10</a>
+                    <a href="/rooms/room-12/">Номер 12</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Восьмимісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-13/">Номер 13</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>У підготовці</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-19/">Номер 19</a>
+                    <a href="/rooms/room-20/">Номер 20</a>
+
+                  </div>
+                </details>
+
+              </div>
+            </details>
+          </div>
+          <div class="nav__cta">
+            <a class="btn btn-sm btn-primary" href="/booking/">Забронювати</a>
+          </div>
+          <button class="nav-toggle" aria-label="Меню" aria-expanded="false">
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+          </button>
+          <button class="theme-toggle" aria-label="Перемкнути тему">
+            <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+            <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-compact">
+        <div class="container hero-compact__content">
+          <span class="hero-compact__badge">
+            <span class="hero-compact__badge-dot"></span>
+            Бронювання
+          </span>
+          <h1 class="hero-compact__title">Забронюйте свій відпочинок</h1>
+          <p class="hero-compact__subtitle">Бронювання телефоном, у Viber/Telegram або в Instagram. Відповідаємо швидко
+            і допомагаємо підібрати номер під ваші дати.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="booking-contact-grid">
+            <div class="booking-contact-card booking-contact-card--primary">
+              <div class="booking-contact-card__icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
+                </svg>
+              </div>
+              <h3>Телефон</h3>
+              <a href="tel:+380938578540" class="booking-contact-card__phone">+380 93 857 85 40</a>
+              <p class="booking-contact-card__hint">Viber / Telegram</p>
+            </div>
+
+            <div class="booking-contact-card">
+              <div class="booking-contact-card__icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+              <h3>Адреса</h3>
+              <p>с. Світязь, вул. Лісова 55</p>
+            </div>
+
+            <div class="booking-contact-card">
+              <div class="booking-contact-card__icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </div>
+              <h3>Email</h3>
+              <a href="mailto:booking@svityazhome.com.ua">booking@svityazhome.com.ua</a>
+            </div>
+
+            <div class="booking-contact-card">
+              <div class="booking-contact-card__icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2.5" y="2.5" width="19" height="19" rx="5" ry="5" />
+                  <circle cx="12" cy="12" r="4.5" />
+                  <circle cx="17.3" cy="6.7" r="1" />
+                </svg>
+              </div>
+              <h3>Instagram</h3>
+              <a href="https://www.instagram.com/svityazhome/" target="_blank"
+                rel="noopener noreferrer">@svityazhome</a>
+              <p>7 801 підписників · 142 дописи</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Booking Form -->
+      <section class="section section--alt" id="bookingRequestSection">
+        <div class="container">
+          <div class="section-head">
+            <p class="kicker">Онлайн-заявка</p>
+            <h2>Залиште заявку на бронювання</h2>
+            <p>Заповніть форму, і ми зв’яжемося з вами для підтвердження дат та номера.</p>
+          </div>
+
+          <div class="booking-request-layout">
+            <article class="card">
+              <form id="bookingRequestForm" class="form" novalidate>
+                <div class="form-row">
+                  <label for="booking-name">Ім’я *
+                    <input class="input" type="text" id="booking-name" name="name" maxlength="100" required
+                      autocomplete="name">
+                  </label>
+                  <label for="booking-phone">Телефон *
+                    <input class="input" type="tel" id="booking-phone" name="phone" maxlength="40" required
+                      autocomplete="tel">
+                  </label>
+                </div>
+
+                <div class="form-row">
+                  <label for="booking-checkin">Дата заїзду *
+                    <input class="input" type="date" id="booking-checkin" name="checkin" required autocomplete="off"
+                      aria-describedby="bookingDateFormatHint">
+                  </label>
+                  <label for="booking-checkout">Дата виїзду *
+                    <input class="input" type="date" id="booking-checkout" name="checkout" required autocomplete="off"
+                      aria-describedby="bookingDateFormatHint">
+                  </label>
+                </div>
+                <p class="form-note" id="bookingDateFormatHint">Виберіть дати у календарі. Якщо не відкривається — введіть вручну у форматі дд.мм.рррр.</p>
+
+                <div class="booking-choice-block">
+                  <p class="booking-choice-label">Кількість гостей *</p>
+                  <div class="booking-chip-grid" id="bookingGuestsGrid" role="radiogroup" aria-label="Кількість гостей"></div>
+                </div>
+
+                <div class="booking-choice-block">
+                  <p class="booking-choice-label">Оберіть номер *</p>
+                  <div class="booking-room-grid" id="bookingRoomGrid" role="radiogroup" aria-label="Оберіть номер"></div>
+                </div>
+
+                <details class="booking-optional-block booking-choice-selects">
+                  <summary>Вибір через списки (додатково)</summary>
+                  <div class="booking-room-filters">
+                    <label for="booking-guests-select">Кількість гостей
+                      <select class="input" id="booking-guests-select" aria-describedby="bookingRoomAutoHint">
+                        <option value="">Оберіть кількість гостей</option>
+                      </select>
+                    </label>
+                    <label for="booking-room-select">Оберіть номер
+                      <select class="input" id="booking-room-select" aria-describedby="bookingRoomAutoHint bookingRoomCountHint">
+                        <option value="">Спочатку оберіть кількість гостей</option>
+                      </select>
+                    </label>
+                  </div>
+                </details>
+                <p class="form-note" id="bookingRoomAutoHint">Після вибору гостей покажемо лише номери, що підходять за місткістю.</p>
+                <p class="form-note" id="bookingRoomCountHint"></p>
+                <input type="hidden" id="booking-guests" name="guests" value="" required>
+                <input type="hidden" id="booking-room" name="room" value="" required>
+
+                <details class="booking-optional-block">
+                  <summary>Додатково (необов’язково)</summary>
+                  <div class="booking-optional-grid">
+                    <label for="booking-email">Email
+                      <input class="input" type="email" id="booking-email" name="email" maxlength="160" autocomplete="email">
+                    </label>
+                    <label for="booking-message">Коментар
+                      <textarea class="input" id="booking-message" name="message" maxlength="2000"
+                        placeholder="Наприклад: потрібне ліжечко для дитини, ранній заїзд тощо"></textarea>
+                    </label>
+                  </div>
+                </details>
+
+                <div class="booking-consent">
+                  <input type="checkbox" id="booking-consent" name="consent" value="1" required>
+                  <label for="booking-consent">
+                    Погоджуюся на обробку персональних даних згідно з
+                    <a href="#bookingPrivacyModal" data-booking-privacy-open>політикою конфіденційності</a>. *
+                  </label>
+                </div>
+
+                <div class="booking-honeypot" aria-hidden="true">
+                  <label for="booking-website">Website</label>
+                  <input class="input" type="text" id="booking-website" name="website" autocomplete="off" tabindex="-1">
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="bookingSubmitButton">Надіслати заявку</button>
+                <p class="form-note" id="bookingMinSubmitHint">Антиспам-захист: форма стане доступною для надсилання через 3 с після завантаження.</p>
+                <p id="bookingFormStatus" class="message" aria-live="polite"></p>
+                <p id="bookingRequestId" class="form-note booking-request-id" aria-live="polite"></p>
+              </form>
+            </article>
+
+            <aside class="card" id="bookingPrivacy">
+              <h3>Політика конфіденційності</h3>
+              <p>Ми використовуємо ваші контактні дані лише для обробки заявки на бронювання та зв’язку з вами.</p>
+              <p class="booking-privacy-trigger">
+                <a class="btn btn-ghost" href="#bookingPrivacyModal" data-booking-privacy-open>Відкрити повну політику</a>
+              </p>
+              <ul class="booking-privacy-list">
+                <li>Збираємо: ім’я, телефон, email (за бажанням), дати, коментар.</li>
+                <li>Не передаємо персональні дані третім особам, окрім випадків, передбачених законом.</li>
+                <li>Заявки зберігаються у захищеному журналі для обробки запитів та антиспаму.</li>
+                <li>Для видалення даних звертайтесь на <a href="mailto:booking@svityazhome.com.ua">booking@svityazhome.com.ua</a>.</li>
+              </ul>
+            </aside>
+
+            <div class="site-modal" id="bookingPrivacyModal" aria-hidden="true">
+              <div class="site-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="bookingPrivacyModalTitle">
+                <button class="site-modal__close" type="button" data-booking-privacy-close aria-label="Закрити">&times;</button>
+                <h3 class="site-modal__title" id="bookingPrivacyModalTitle">Політика конфіденційності</h3>
+                <p class="site-modal__text">Ми обробляємо персональні дані лише для обробки бронювання, зворотного зв’язку та антиспам-захисту.</p>
+                <ul class="booking-privacy-list">
+                  <li>Дані: ім’я, телефон, email (за бажанням), дати проживання, номер, коментар.</li>
+                  <li>Додатково фіксуємо технічні дані: IP та User-Agent для безпеки сервісу.</li>
+                  <li>Зберігаємо заявки у захищеному журналі; доступ мають лише уповноважені особи.</li>
+                  <li>Дані не передаються третім сторонам, крім випадків, передбачених законом.</li>
+                  <li>Запит на видалення або уточнення: <a href="mailto:booking@svityazhome.com.ua">booking@svityazhome.com.ua</a>.</li>
+                </ul>
+                <div class="site-modal__actions">
+                  <button type="button" class="btn btn-primary" data-booking-privacy-close>Зрозуміло</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-head">
+            <p class="kicker">Процес бронювання</p>
+            <h2>Як забронювати номер</h2>
+          </div>
+          <div class="grid grid-3">
+            <article class="card card-feature booking-step animate-on-scroll fade-up">
+              <div class="card-feature__icon"><span class="icon-svg icon-svg--draw"
+                  style="font-size:0;width:36px;height:36px;color:var(--forest)"><svg viewBox="0 0 24 24">
+                    <path pathLength="1"
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0 1 22 16.92Z" />
+                  </svg></span></div>
+              <h3>Зв'яжіться з нами</h3>
+              <p>Зателефонуйте або напишіть у Viber/Telegram. Ми відповідаємо швидко!</p>
+            </article>
+            <article class="card card-feature booking-step animate-on-scroll fade-up">
+              <div class="card-feature__icon"><span class="icon-svg icon-svg--draw"
+                  style="font-size:0;width:36px;height:36px;color:var(--forest)"><svg viewBox="0 0 24 24">
+                    <rect pathLength="1" x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <path pathLength="1" d="M16 2v4M8 2v4M3 10h18" />
+                    <path pathLength="1" d="m9 16 2 2 4-4" />
+                  </svg></span></div>
+              <h3>Оберіть номер і дати</h3>
+              <p>Разом підберемо найкращий варіант під ваші потреби та уточнимо наявність.</p>
+            </article>
+            <article class="card card-feature booking-step animate-on-scroll fade-up">
+              <div class="card-feature__icon"><span class="icon-svg icon-svg--draw"
+                  style="font-size:0;width:36px;height:36px;color:var(--forest)"><svg viewBox="0 0 24 24">
+                    <path pathLength="1" d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <path pathLength="1" d="M22 4 12 14.01l-3-3" />
+                  </svg></span></div>
+              <h3>Підтвердіть бронювання</h3>
+              <p data-policy-prepayment-text>Для підтвердження бронювання необхідно внести передоплату 30%.
+                Решту суми оплачуєте при заселенні.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <p class="kicker">Відповіді на питання</p>
+            <h2>Часті питання</h2>
+          </div>
+          <div class="faq-grid">
+            <article class="card faq-card">
+              <h3><span class="tip-icon"><svg viewBox="0 0 24 24">
+                    <circle pathLength="1" cx="12" cy="12" r="10" />
+                    <path pathLength="1" d="M12 6v6l4 2" />
+                  </svg></span> О котрій заселення та виселення?</h3>
+              <p data-policy-checkin-text>Заселення з 14:00, виселення до 11:00. За попереднім узгодженням можливе раннє заселення або пізнє
+                виселення.</p>
+            </article>
+            <article class="card faq-card">
+              <h3><span class="tip-icon"><svg viewBox="0 0 24 24">
+                    <path pathLength="1" d="M2 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z" />
+                    <path pathLength="1" d="M12 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z" />
+                    <path pathLength="1" d="M7 14c3.22-2.91 4.29-8.75 5.72-12 1.43 3.25 2.5 9.09 5.72 12" />
+                  </svg></span> Який розмір передоплати?</h3>
+              <p data-policy-prepayment-text>Передоплата для підтвердження бронювання — 30%. Решту суми
+                оплачуєте при заселенні.</p>
+            </article>
+            <article class="card faq-card">
+              <h3><span class="tip-icon"><svg viewBox="0 0 24 24">
+                    <circle pathLength="1" cx="12" cy="12" r="10" />
+                    <path pathLength="1" d="M8 14s1.5 2 4 2 4-2 4-2" />
+                    <line pathLength="1" x1="9" y1="9" x2="9.01" y2="9" />
+                    <line pathLength="1" x1="15" y1="9" x2="15.01" y2="9" />
+                  </svg></span> Чи можна з тваринами?</h3>
+              <p>Так, ми приймаємо гостей з домашніми улюбленцями. Попередьте нас заздалегідь.</p>
+            </article>
+            <article class="card faq-card">
+              <h3><span class="tip-icon"><svg viewBox="0 0 24 24">
+                    <path pathLength="1" d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                    <path pathLength="1" d="M7 2v20" />
+                    <path pathLength="1" d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+                  </svg></span> Чи є харчування?</h3>
+              <p>У садибі є спільна кухня для самостійного приготування. Також біля озера є магазини.</p>
+            </article>
+            <article class="card faq-card">
+              <h3><span class="tip-icon"><svg viewBox="0 0 24 24">
+                    <path pathLength="1"
+                      d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10H8s-2.7.6-4.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2" />
+                    <circle pathLength="1" cx="7" cy="17" r="2" />
+                    <path pathLength="1" d="M9 17h6" />
+                    <circle pathLength="1" cx="17" cy="17" r="2" />
+                  </svg></span> Чи є парковка?</h3>
+              <p>Так, безкоштовна парковка на території для всіх гостей.</p>
+            </article>
+            <article class="card faq-card">
+              <h3><span class="tip-icon"><svg viewBox="0 0 24 24">
+                    <path pathLength="1" d="M12 20h.01" />
+                    <path pathLength="1" d="M2 8.82a15 15 0 0 1 20 0" />
+                    <path pathLength="1" d="M5 12.86a10 10 0 0 1 14 0" />
+                    <path pathLength="1" d="M8.5 16.43a5 5 0 0 1 7 0" />
+                  </svg></span> Чи є Wi-Fi?</h3>
+              <p>Так, безкоштовний Wi-Fi доступний на всій території садиби.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section cta-section">
+        <div class="container">
+          <div class="cta-content">
+            <h2>Залишились питання?</h2>
+            <p>Зателефонуйте нам — ми з радістю відповімо та допоможемо обрати найкращий номер!</p>
+            <div class="cta-actions">
+              <a href="tel:+380938578540" class="btn btn-primary btn-lg"><span class="tip-icon"><svg
+                    viewBox="0 0 24 24">
+                    <path pathLength="1"
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0 1 22 16.92Z" />
+                  </svg></span> Зателефонувати</a>
+              <a href="/rooms/" class="btn btn-ghost btn-lg">Переглянути номери</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer__grid">
+        <div>
+          <h3>SvityazHOME</h3>
+          <p>SvityazHOME — сімейна садиба біля озера Світязь: затишні номери, тиха територія, BBQ, Wi‑Fi та швидкий
+            звʼязок для бронювання.</p>
+        </div>
+        <div>
+          <h4>Сторінки</h4>
+          <ul>
+            <li><a href="/">Головна</a></li>
+            <li><a href="/about/">Про нас</a></li>
+            <li><a href="/gallery/">Галерея</a></li>
+            <li><a href="/ozero-svityaz/">Озеро Світязь</a></li>
+            <li><a href="/rooms/">Номери</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Контакти</h4>
+          <p>Світязь, вул. Лісова 55</p>
+          <p><a href="tel:+380938578540">+380 93 857 85 40</a></p>
+          <p><a href="mailto:booking@svityazhome.com.ua">booking@svityazhome.com.ua</a></p>
+        </div>
+        <div>
+          <h4>Соцмережі</h4>
+          <div class="social">
+            <a href="https://instagram.com/svityazhome" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.tiktok.com/@svityazhome" target="_blank" rel="noopener noreferrer">TikTok</a>
+          </div>
+        </div>
+      </div>
+      <div class="container footer__bottom">
+        <p>© 2026 SvityazHOME. Усі права захищено.</p>
+      </div>
+    </footer>
+    <script src="/assets/js/policy.js" defer></script>
+    <script src="/assets/js/app.js" defer></script>
+    <script src="/assets/js/booking.js" defer></script>
+    <script>
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () {
+          var s = document.createElement('script');
+          s.src = '/assets/js/easter-egg.js';
+          document.body.appendChild(s);
+        });
+      } else {
+        window.addEventListener('load', function () {
+          var s = document.createElement('script');
+          s.src = '/assets/js/easter-egg.js';
+          document.body.appendChild(s);
+        });
+      }
+    </script>
+  </body>
+
+</html>

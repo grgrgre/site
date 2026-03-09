@@ -1,0 +1,1757 @@
+<!doctype html>
+<html lang="uk">
+
+  <head>
+    <meta charset="UTF-8">
+    <script>(function () { try { var t = localStorage.getItem('theme'); if (t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme:dark)').matches)) { document.documentElement.setAttribute('data-theme', 'dark') } } catch (e) { } })()</script>
+    <meta name="google-site-verification" content="6zL_DxAEdwOlALvjMBkzuhU_novzEasXniAutEgTu3k">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Номери — SvityazHOME | Житло біля озера Світязь</title>
+    <meta name="description"
+      content="Оберіть ідеальний номер для відпочинку біля озера Світязь. Двомісні, тримісні та сімейні кімнати. WiFi, зручності, приватний двір.">
+    <link rel="canonical" href="https://svityazhome.com.ua/rooms/">
+
+        <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Головна",
+            "item": "https://svityazhome.com.ua/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Номери",
+            "item": "https://svityazhome.com.ua/rooms/"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://svityazhome.com.ua/rooms/">
+    <meta property="og:title" content="Номери — SvityazHOME">
+    <meta property="og:description" content="Оберіть ідеальний номер для відпочинку біля озера Світязь.">
+    <meta property="og:image"
+      content="https://svityazhome.com.ua/storage/uploads/rooms/room-1/room-1-bedroom-metal-bed-wooden-walls.webp">
+    <meta property="og:locale" content="uk_UA">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2d7a8c">
+    <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png">
+
+    <!-- Preload критичних ресурсів -->
+    <link rel="preload" href="/storage/uploads/rooms/room-1/room-1-bedroom-metal-bed-wooden-walls.webp" as="image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400..700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
+
+    <!-- Критичні стилі для швидкого відображення -->
+    <style>
+      /* Базові стилі для швидкого першого рендеру */
+      img,
+      video,
+      canvas,
+      svg {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+
+      .skeleton {
+        background: linear-gradient(90deg,
+            var(--bg-soft, #f2efe9) 25%,
+            var(--surface, #fff) 50%,
+            var(--bg-soft, #f2efe9) 75%);
+        background-size: 100% 100%;
+      }
+
+      /* Lazy image placeholder */
+      .lazy-image {
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .lazy-image.loaded {
+        opacity: 1;
+      }
+
+      .image-placeholder {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--bg-soft, #f2efe9) 0%, var(--surface, #fff) 100%);
+      }
+
+      /* Content visibility для оптимізації рендерингу */
+      .room-card-new {
+        content-visibility: auto;
+        contain-intrinsic-size: 0 400px;
+      }
+
+      /* Rooms grid polish (page-level override over shared minified CSS) */
+      .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: clamp(14px, 2vw, 24px);
+        align-items: stretch;
+      }
+
+      .room-card-new {
+        height: 100%;
+      }
+
+      .room-card-new__link {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-height: 100%;
+      }
+
+      .room-card-new__content {
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 12px;
+      }
+
+      .room-card-new__desc {
+        margin-bottom: 0;
+        -webkit-line-clamp: 3;
+      }
+
+      .room-card-new--large {
+        grid-column: span 2;
+      }
+
+      .room-card-new[hidden] {
+        display: none !important;
+      }
+
+      @media (max-width: 1120px) {
+        .rooms-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .rooms-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .room-card-new--large {
+          grid-column: auto;
+        }
+      }
+
+      .rooms-section {
+        position: relative;
+        overflow: clip;
+        padding-block: clamp(28px, 4vw, 64px) clamp(56px, 7vw, 92px);
+      }
+
+      .rooms-section::before,
+      .rooms-section::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .rooms-section::before {
+        width: min(540px, 62vw);
+        aspect-ratio: 1;
+        left: -120px;
+        top: -140px;
+        background: radial-gradient(circle, rgba(132, 171, 143, 0.24), transparent 68%);
+      }
+
+      .rooms-section::after {
+        width: min(480px, 56vw);
+        aspect-ratio: 1;
+        right: -100px;
+        bottom: -180px;
+        background: radial-gradient(circle, rgba(196, 171, 129, 0.2), transparent 70%);
+      }
+
+      .rooms-section > .container {
+        position: relative;
+        z-index: 1;
+      }
+
+      .rooms-filters__wrapper {
+        background: linear-gradient(140deg, color-mix(in srgb, var(--surface) 92%, #f6efe5), var(--surface));
+        border-color: color-mix(in srgb, var(--border) 75%, rgba(174, 139, 92, 0.25));
+        box-shadow: 0 20px 38px -34px rgba(10, 17, 18, 0.8);
+      }
+
+      .rooms-filters__stats {
+        border-left-color: color-mix(in srgb, var(--border) 72%, rgba(108, 145, 123, 0.26));
+      }
+
+      .room-card-new {
+        position: relative;
+        isolation: isolate;
+        background:
+          linear-gradient(180deg, color-mix(in srgb, var(--surface) 95%, #f7f2e9) 0%, var(--surface) 100%);
+        border: 1px solid color-mix(in srgb, var(--border) 74%, rgba(255, 255, 255, 0.4));
+        box-shadow:
+          0 16px 36px -30px rgba(17, 28, 30, 0.9),
+          0 1px 0 rgba(255, 255, 255, 0.5) inset;
+      }
+
+      .room-card-new::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 4px;
+        background: linear-gradient(90deg, #86ae90 0%, #c8b084 58%, #6b9382 100%);
+        opacity: 0.9;
+        z-index: 2;
+      }
+
+      .room-card-new:hover {
+        transform: translateY(-7px);
+        border-color: color-mix(in srgb, var(--border-accent) 80%, rgba(130, 176, 145, 0.45));
+        box-shadow:
+          0 26px 50px -30px rgba(10, 17, 18, 0.95),
+          0 1px 0 rgba(255, 255, 255, 0.62) inset;
+      }
+
+      .room-card-new__image::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 56%;
+        pointer-events: none;
+        background: linear-gradient(180deg, transparent, rgba(10, 18, 20, 0.38));
+      }
+
+      .room-card-new__content {
+        padding: clamp(16px, 1.8vw, 22px);
+      }
+
+      .room-card-new__title {
+        letter-spacing: 0.01em;
+      }
+
+      .room-card-new__capacity {
+        background: linear-gradient(135deg, rgba(106, 144, 121, 0.2), rgba(72, 117, 96, 0.12));
+        color: color-mix(in srgb, var(--text) 82%, #2f5f4c);
+        border: 1px solid color-mix(in srgb, var(--border) 62%, rgba(108, 145, 123, 0.46));
+      }
+
+      .room-card-new__desc {
+        color: color-mix(in srgb, var(--muted) 84%, var(--text));
+      }
+
+      .room-card-new__footer {
+        border-top-color: color-mix(in srgb, var(--border) 72%, rgba(117, 147, 123, 0.3));
+      }
+
+      .room-card-new__features span {
+        background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 90%, #f4eee2), var(--surface-2));
+        border: 1px solid color-mix(in srgb, var(--border) 70%, rgba(176, 146, 99, 0.24));
+      }
+
+      .room-card-new__view {
+        background: linear-gradient(135deg, #f9f7f2 0%, #ffffff 100%);
+        border: 1px solid rgba(255, 255, 255, 0.78);
+      }
+
+      .room-card-new--featured {
+        border-width: 2px;
+      }
+
+      :root[data-theme="dark"] .rooms-filters__wrapper {
+        background: linear-gradient(160deg, rgba(20, 34, 37, 0.96), rgba(15, 26, 29, 0.92));
+        border-color: color-mix(in srgb, var(--border) 68%, rgba(158, 203, 176, 0.28));
+      }
+
+      :root[data-theme="dark"] .room-card-new {
+        background: linear-gradient(175deg, rgba(20, 31, 35, 0.95), rgba(15, 24, 28, 0.96));
+        border-color: color-mix(in srgb, var(--border) 66%, rgba(151, 198, 169, 0.2));
+      }
+
+      :root[data-theme="dark"] .room-card-new::before {
+        opacity: 0.72;
+      }
+
+      /* Оптимізація завантаження зображень */
+      img[loading="lazy"] {
+        background: #f0f0f0;
+      }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MHTVH59XZD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-MHTVH59XZD');
+    </script>
+  </head>
+
+  <body data-page="rooms" class="page-rooms">
+    <header class="site-header">
+      <div class="container nav-bar">
+        <a class="brand" href="/"><span class="brand__dot"></span> SvityazHOME</a>
+        <nav class="nav">
+          <div class="nav__links" id="navLinks">
+            <a class="nav__link" data-nav="home" href="/">Головна</a>
+            <a class="nav__link" data-nav="about" href="/about/">Про нас</a>
+            <a class="nav__link" data-nav="gallery" href="/gallery/">Галерея</a>
+            <a class="nav__link" data-nav="lake" href="/ozero-svityaz/">Озеро Світязь</a>
+            <a class="nav__link" data-nav="reviews" href="/reviews/">Відгуки</a>
+            <details class="nav__dropdown">
+              <summary class="nav__link nav__link--dropdown" data-nav="rooms">
+                Номери
+                <span class="nav__chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="nav__dropdown-menu">
+                <a class="nav__dropdown-all" href="/rooms/">Усі номери</a>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Двомісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-4/">Номер 4</a>
+                    <a href="/rooms/room-14/">Номер 14</a>
+                    <a href="/rooms/room-15/">Номер 15</a>
+                    <a href="/rooms/room-16/">Номер 16</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Тримісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-1/">Номер 1</a>
+                    <a href="/rooms/room-2/">Номер 2</a>
+                    <a href="/rooms/room-17/">Номер 17</a>
+                    <a href="/rooms/room-18/">Номер 18</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Чотиримісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-3/">Номер 3</a>
+                    <a href="/rooms/room-5/">Номер 5</a>
+                    <a href="/rooms/room-6/">Номер 6</a>
+                    <a href="/rooms/room-7/">Номер 7</a>
+                    <a href="/rooms/room-8/">Номер 8</a>
+                    <a href="/rooms/room-11/">Номер 11</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Двоярусні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-9/">Номер 9</a>
+                    <a href="/rooms/room-10/">Номер 10</a>
+                    <a href="/rooms/room-12/">Номер 12</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>Восьмимісні</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-13/">Номер 13</a>
+
+                  </div>
+                </details>
+
+                <details class="nav-rooms__group">
+                  <summary><span class="nav-rooms__icon" aria-hidden="true"></span>У підготовці</summary>
+                  <div class="nav-rooms__list">
+                    <a href="/rooms/room-19/">Номер 19</a>
+                    <a href="/rooms/room-20/">Номер 20</a>
+
+                  </div>
+                </details>
+
+              </div>
+            </details>
+          </div>
+          <div class="nav__cta">
+            <button class="theme-toggle" aria-label="Перемкнути тему">
+              <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+              <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            </button>
+            <a class="btn btn-sm btn-primary" href="/booking/">Забронювати</a>
+          </div>
+          <button class="nav-toggle" aria-label="Меню" aria-expanded="false">
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero секція для сторінки номерів -->
+      <section class="hero-compact">
+        <div class="container hero-compact__content">
+          <span class="hero-compact__badge">
+            <span class="hero-compact__badge-dot"></span>
+            20 номерів · від 2 до 8 гостей
+          </span>
+          <h1 class="hero-compact__title">Оберіть свій ідеальний номер</h1>
+          <p class="hero-compact__subtitle">Від романтичних номерів для двох до простору для великої компанії — у нас є
+            варіант для кожного</p>
+        </div>
+      </section>
+
+      <!-- Фільтри -->
+      <section class="rooms-filters">
+        <div class="container">
+          <div class="rooms-filters__wrapper">
+            <div class="rooms-filters__group">
+              <label class="rooms-filters__label">
+                <svg class="rooms-filters__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>Гостей</span>
+              </label>
+              <select class="rooms-filters__select" id="filterCapacity">
+                <option value="all" selected>Будь-яка кількість</option>
+                <option value="2" data-count="4">2 гості</option>
+                <option value="3" data-count="4">3 гості</option>
+                <option value="4" data-count="6">4 гості</option>
+                <option value="6" data-count="2">6 гостей</option>
+                <option value="7" data-count="2">7 гостей</option>
+                <option value="8" data-count="2">8 гостей</option>
+              </select>
+            </div>
+            <div class="rooms-filters__divider"></div>
+            <div class="rooms-filters__group">
+              <label class="rooms-filters__label">
+                <svg class="rooms-filters__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 3h18v18H3zM21 9H3M9 21V9"></path>
+                </svg>
+                <span>Категорія</span>
+              </label>
+              <select class="rooms-filters__select" id="filterType">
+                <option value="all" selected>Усі категорії</option>
+                <option value="lux" data-count="9">✨ Люкс</option>
+                <option value="standard" data-count="6">🏠 Стандарт</option>
+                <option value="economy" data-count="1">💰 Економ</option>
+                <option value="bunk" data-count="3">🛏️ Двоярусні</option>
+                <option value="future" data-count="2">🔧 У підготовці</option>
+              </select>
+            </div>
+            <button class="rooms-filters__reset" id="resetFilters" title="Скинути фільтри">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+              <span>Скинути</span>
+            </button>
+          </div>
+          <div class="rooms-filters__chips" aria-label="Швидкі фільтри">
+            <div class="rooms-filter-chip-group" id="capacityChips" aria-label="Фільтр за кількістю гостей"></div>
+            <div class="rooms-filter-chip-group" id="typeChips" aria-label="Фільтр за категорією"></div>
+          </div>
+          <div class="rooms-filters__stats" id="roomsStats">
+            <span class="rooms-filters__count">
+              Знайдено: <strong id="roomsCount">20</strong> номерів
+            </span>
+            <div class="rooms-filters__active is-hidden" id="activeFilters">
+              <span class="rooms-filters__active-label">Активні фільтри:</span>
+              <div class="rooms-filters__active-tags" id="activeFilterTags"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Сітка номерів -->
+      <section class="rooms-section">
+        <div class="container">
+          <div class="rooms-grid" id="rooms-grid">
+
+            <article class="room-card-new" data-type="lux" data-capacity="3">
+              <a href="/rooms/room-1/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-1/room-1-bedroom-metal-bed-wooden-walls.webp" alt="Номер 1"
+                    loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 1</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>3</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Світлий і просторий номер для спокійного відпочинку біля Світязя</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect pathLength="1" x="2" y="4" width="20" height="16" rx="2" />
+                            <path pathLength="1" d="M2 12h20" />
+                            <path pathLength="1" d="M6 12V8" />
+                            <path pathLength="1" d="M18 12V8" />
+                          </svg></span> Зручні ліжка</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1"
+                              d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.25 3.75 1.25 3.75" />
+                          </svg></span> Вид на сад</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="lux" data-capacity="3">
+              <a href="/rooms/room-2/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-2/cover.webp" alt="Номер 2" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 2</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>3</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Світлий люкс з видом на зелену територію, ідеальний для пар</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle pathLength="1" cx="12" cy="12" r="5" />
+                            <line pathLength="1" x1="12" y1="1" x2="12" y2="3" />
+                            <line pathLength="1" x1="12" y1="21" x2="12" y2="23" />
+                            <line pathLength="1" x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line pathLength="1" x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line pathLength="1" x1="1" y1="12" x2="3" y2="12" />
+                            <line pathLength="1" x1="21" y1="12" x2="23" y2="12" />
+                            <line pathLength="1" x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line pathLength="1" x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                          </svg></span> Світлий</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1"
+                              d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.25 3.75 1.25 3.75" />
+                          </svg></span> Вид на зелень</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="standard" data-capacity="4">
+              <a href="/rooms/room-3/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-3/cover.webp" alt="Номер 3" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--standard">Стандарт</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 3</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>4</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Комфортний номер з добрим поєднанням ціни та якості</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle pathLength="1" cx="9" cy="7" r="4" />
+                            <path pathLength="1" d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path pathLength="1" d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg></span> Для сім'ї</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M12 2v20" />
+                            <path pathLength="1" d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                          </svg></span> Вигідно</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="standard" data-capacity="2">
+              <a href="/rooms/room-4/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-4/cover.webp" alt="Номер 4" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--standard">Стандарт</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 4</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>2</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Затишний номер для двох на території біля озера</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1"
+                              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg></span> Для пари</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1"
+                              d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                            <path pathLength="1"
+                              d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                            <path pathLength="1"
+                              d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                          </svg></span> Близько до озера</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="lux" data-capacity="4">
+              <a href="/rooms/room-5/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-5/cover.webp" alt="Номер 5" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 5</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>4</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Просторий люкс для невеликої сім'ї з усіма зручностями</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span>🛋️ Простір</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8Z" />
+                          </svg></span> Всі зручності</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="lux" data-capacity="4">
+              <a href="/rooms/room-6/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-6/cover.webp" alt="Номер 6" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 6</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>4</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Елегантний люкс з панорамним видом для пар та сімей</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="m8 3-6 18h20L14 7l-3 6z" />
+                          </svg></span> Панорама</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M6 3h12l4 6-10 12L2 9z" />
+                            <path pathLength="1" d="M2 9h20" />
+                          </svg></span> Елегантний</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="lux" data-capacity="4">
+              <a href="/rooms/room-7/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-7/cover.webp" alt="Номер 7" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                    <span class="room-card-new__badge room-card-new__badge--premium">Преміум</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 7</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>4</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Преміальний люкс з максимальними зручностями</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M2 17l3-11 5 6 2-8 2 8 5-6 3 11H2z" />
+                            <line pathLength="1" x1="2" y1="20" x2="22" y2="20" />
+                          </svg></span> Преміум</span>
+                      <span>🌟 Топ вибір</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="lux" data-capacity="4">
+              <a href="/rooms/room-8/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-8/cover.webp" alt="Номер 8" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 8</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>4</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Люкс з елегантним дизайном та сучасним комфортом</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span>🎨 Дизайн</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M3 12l9-9 9 9" />
+                            <path pathLength="1" d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9" />
+                            <path pathLength="1" d="M9 21v-6h6v6" />
+                          </svg></span> Комфорт</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new room-card-new--large" data-type="bunk" data-capacity="7">
+              <a href="/rooms/room-9/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-9/cover.webp" alt="Номер 9" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--bunk">Двоярусний</span>
+                    <span class="room-card-new__badge room-card-new__badge--group">Для групи</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 9</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>7</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Просторий номер на 7 гостей для великої сім'ї або групи</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle pathLength="1" cx="9" cy="7" r="4" />
+                            <path pathLength="1" d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path pathLength="1" d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg></span> Для компанії</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8Z" />
+                          </svg></span> Весело разом</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new room-card-new--large" data-type="bunk" data-capacity="7">
+              <a href="/rooms/room-10/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-10/cover.webp" alt="Номер 10" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--bunk">Двоярусний</span>
+                    <span class="room-card-new__badge room-card-new__badge--group">Для групи</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 10</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>7</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Комфортний номер для великої групи з повним спектром послуг</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span>🛎️ Повний сервіс</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M12 2L2 22h20L12 2z" />
+                            <path pathLength="1" d="M12 2v20" />
+                          </svg></span> Дружня атмосфера</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="lux" data-capacity="4">
+              <a href="/rooms/room-11/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-11/cover.webp" alt="Номер 11" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 11</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>4</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Вишуканий люкс для пари або невеликої сім'ї</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M6 3h12l4 6-10 12L2 9z" />
+                            <path pathLength="1" d="M2 9h20" />
+                          </svg></span> Вишуканий</span>
+                      <span>🌹 Романтика</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new room-card-new--featured" data-type="bunk" data-capacity="8">
+              <a href="/rooms/room-12/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-12/cover.webp" alt="Номер 12" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--bunk">Двоярусний</span>
+                    <span class="room-card-new__badge room-card-new__badge--hot">Популярний</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 12</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>8</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Просторий номер на 8 гостей з усіма зручностями для великої компанії
+                  </p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8Z" />
+                          </svg></span> Для вечірок</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle pathLength="1" cx="9" cy="7" r="4" />
+                            <path pathLength="1" d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path pathLength="1" d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg></span> Велика група</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new room-card-new--featured" data-type="lux" data-capacity="8">
+              <a href="/rooms/room-13/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-13/cover.webp" alt="Номер 13" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--type">Люкс</span>
+                    <span class="room-card-new__badge room-card-new__badge--premium">VIP</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 13</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>8</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Розкішний люкс на 8 гостей з максимальними зручностями</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M2 17l3-11 5 6 2-8 2 8 5-6 3 11H2z" />
+                            <line pathLength="1" x1="2" y1="20" x2="22" y2="20" />
+                          </svg></span> VIP сервіс</span>
+                      <span>🌟 Найкращий</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="standard" data-capacity="2">
+              <a href="/rooms/room-14/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-14/cover.webp" alt="Номер 14" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--standard">Стандарт</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 14</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>2</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Затишний стандарт для двох гостей біля озера Світязь</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1"
+                              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg></span> Для двох</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1"
+                              d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                            <path pathLength="1"
+                              d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                            <path pathLength="1"
+                              d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                          </svg></span> Біля озера</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="standard" data-capacity="2">
+              <a href="/rooms/room-15/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-15/cover.webp" alt="Номер 15" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--standard">Стандарт</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 15</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>2</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Затишний стандарт для пари біля озера</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M17 18a5 5 0 0 0-10 0" />
+                            <line pathLength="1" x1="12" y1="9" x2="12" y2="2" />
+                            <line pathLength="1" x1="4.22" y1="10.22" x2="5.64" y2="11.64" />
+                            <line pathLength="1" x1="1" y1="18" x2="3" y2="18" />
+                            <line pathLength="1" x1="21" y1="18" x2="23" y2="18" />
+                            <line pathLength="1" x1="18.36" y1="11.64" x2="19.78" y2="10.22" />
+                            <line pathLength="1" x1="23" y1="22" x2="1" y2="22" />
+                          </svg></span> Тиша</span>
+                      <span>💕 Романтика</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="standard" data-capacity="2">
+              <a href="/rooms/room-16/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-16/cover.webp" alt="Номер 16" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--standard">Стандарт</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 16</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>2</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Затишний номер стандарт для двох гостей</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M3 12l9-9 9 9" />
+                            <path pathLength="1" d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9" />
+                            <path pathLength="1" d="M9 21v-6h6v6" />
+                          </svg></span> Затишок</span>
+                      <span>☕ Комфорт</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="standard" data-capacity="3">
+              <a href="/rooms/room-17/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-17/cover.webp" alt="Номер 17" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--standard">Стандарт</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 17</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>3</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Комфортний номер стандарт на 3 гості</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle pathLength="1" cx="9" cy="7" r="4" />
+                            <path pathLength="1" d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path pathLength="1" d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg></span> Для трьох</span>
+                      <span><span class="tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1"
+                              d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.25 3.75 1.25 3.75" />
+                          </svg></span> Природа</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new" data-type="economy" data-capacity="3">
+              <a href="/rooms/room-18/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-18/cover.webp" alt="Номер 18" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--economy">Економ</span>
+                    <span class="room-card-new__badge room-card-new__badge--deal">Вигідно</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Переглянути →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 18</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>3</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Доступний економ на 3 гості з базовими зручностями</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span>💵 Бюджетно</span>
+                      <span>✅ Все необхідне</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new room-card-new--coming" data-type="future" data-capacity="6">
+              <a href="/rooms/room-19/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-19/cover.webp" alt="Номер 19" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--future">У підготовці</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Дізнатися більше →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 19</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>6</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Номер у стадії підготовки, скоро буде доступний</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span>🚧 Скоро</span>
+                      <span>⏳ Очікуйте</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+            <article class="room-card-new room-card-new--coming" data-type="future" data-capacity="6">
+              <a href="/rooms/room-20/" class="room-card-new__link">
+                <div class="room-card-new__image">
+                  <img src="/storage/uploads/rooms/room-20/cover.webp" alt="Номер 20" loading="lazy">
+                  <div class="room-card-new__badges">
+                    <span class="room-card-new__badge room-card-new__badge--future">У підготовці</span>
+                  </div>
+                  <div class="room-card-new__overlay">
+                    <span class="room-card-new__view">Дізнатися більше →</span>
+                  </div>
+                </div>
+                <div class="room-card-new__content">
+                  <div class="room-card-new__header">
+                    <h3 class="room-card-new__title">Номер 20</h3>
+                    <div class="room-card-new__capacity">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                      </svg>
+                      <span>6</span>
+                    </div>
+                  </div>
+                  <p class="room-card-new__desc">Номер у стадії підготовки, незабаром буде готовий</p>
+                  <div class="room-card-new__footer">
+                    <div class="room-card-new__features">
+                      <span>🏗️ Будується</span>
+                      <span>🌟 Нове</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </article>
+
+          </div>
+
+          <div id="roomsEmpty" class="rooms-empty is-hidden">
+            <div class="rooms-empty__icon"><span class="icon-svg icon-svg--draw"><svg viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle pathLength="1" cx="11" cy="11" r="8" />
+                  <line pathLength="1" x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg></span></div>
+            <h3>Номерів не знайдено</h3>
+            <p>Спробуйте змінити критерії пошуку</p>
+            <button class="btn btn-outline" onclick="document.getElementById('resetFilters').click()">Скинути
+              фільтри</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA секція -->
+      <section class="rooms-cta">
+        <div class="container">
+          <div class="rooms-cta__card">
+            <div class="rooms-cta__content">
+              <h2>Потрібна допомога з вибором?</h2>
+              <p>Зателефонуйте нам — ми допоможемо підібрати ідеальний номер для вашої компанії</p>
+            </div>
+            <div class="rooms-cta__actions">
+              <a href="tel:+380938578540" class="btn btn-primary btn-lg">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="width:20px;height:20px;margin-right:8px">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                  </path>
+                </svg>
+                Зателефонувати
+              </a>
+              <a href="/booking/" class="btn btn-outline btn-lg">Забронювати онлайн</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer__grid">
+        <div>
+          <h3>SvityazHOME</h3>
+          <p>SvityazHOME — це затишна сімейна садиба для відпочинку біля озера Світязь. Тут — відчуття дому, куди
+            хочеться
+            повертатися.</p>
+        </div>
+        <div>
+          <h4>Сторінки</h4>
+          <ul>
+            <li><a href="/">Головна</a></li>
+            <li><a href="/about/">Про нас</a></li>
+            <li><a href="/gallery/">Галерея</a></li>
+            <li><a href="/ozero-svityaz/">Озеро Світязь</a></li>
+            <li><a href="/rooms/">Номери</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Контакти</h4>
+          <p>Світязь, вул. Лісова 55</p>
+          <p><a href="tel:+380938578540">+380 93 857 85 40</a></p>
+          <p><a href="mailto:booking@svityazhome.com.ua">booking@svityazhome.com.ua</a></p>
+        </div>
+        <div>
+          <h4>Соцмережі</h4>
+          <div class="social">
+            <a href="https://instagram.com/svityazhome" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.tiktok.com/@svityazhome" target="_blank" rel="noopener noreferrer">TikTok</a>
+          </div>
+        </div>
+      </div>
+      <div class="container footer__bottom">
+        <p>© 2026 SvityazHOME. Усі права захищено.</p>
+      </div>
+    </footer>
+
+    <!-- Smart Фільтри та Lazy Loading -->
+    <script>
+      (function () {
+        'use strict';
+
+        window.__SVH_ROOMS_FILTERS_MANAGED__ = true;
+
+        // ===== SMART ФІЛЬТРИ =====
+        const filterCapacity = document.getElementById('filterCapacity');
+        const filterType = document.getElementById('filterType');
+        const resetFilters = document.getElementById('resetFilters');
+        const roomsEmpty = document.getElementById('roomsEmpty');
+        const roomsCount = document.getElementById('roomsCount');
+        const roomsGrid = document.getElementById('rooms-grid');
+        const activeFilters = document.getElementById('activeFilters');
+        const activeFilterTags = document.getElementById('activeFilterTags');
+        const capacityChips = document.getElementById('capacityChips');
+        const typeChips = document.getElementById('typeChips');
+
+        const roomItems = Array.from(document.querySelectorAll('.room-card-new, .room-card')).map((card) => ({
+          element: card,
+          capacity: String(card.dataset.capacity || ''),
+          type: String(card.dataset.type || '')
+        }));
+
+        const TYPE_LABELS = {
+          lux: 'Люкс',
+          standard: 'Стандарт',
+          economy: 'Економ',
+          bunk: 'Двоярусні',
+          future: 'У підготовці'
+        };
+
+        const setHidden = (node, hidden) => {
+          if (!node) return;
+          node.classList.toggle('is-hidden', hidden);
+        };
+
+        const optionBaseLabel = (option) => {
+          const saved = String(option.dataset.baseLabel || '');
+          if (saved !== '') return saved;
+          const normalized = option.textContent.split(' (')[0].split(' —')[0].trim();
+          option.dataset.baseLabel = normalized;
+          option.dataset.originalText = normalized;
+          return normalized;
+        };
+
+        const countRoomsForAll = (selectId, otherFilterValue) => {
+          if (selectId === 'filterCapacity') {
+            return roomItems.filter((room) => otherFilterValue === 'all' || room.type === otherFilterValue).length;
+          }
+          return roomItems.filter((room) => otherFilterValue === 'all' || room.capacity === String(otherFilterValue)).length;
+        };
+
+        const renderFilterChips = (select, container, key, allLabel) => {
+          if (!select || !container) return;
+          container.innerHTML = '';
+
+          Array.from(select.options).forEach((option) => {
+            if (option.value === '') return;
+
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'rooms-filter-chip';
+            chip.dataset.filterKey = key;
+            chip.dataset.value = option.value;
+
+            const labelNode = document.createElement('span');
+            labelNode.className = 'rooms-filter-chip__label';
+            labelNode.textContent = option.value === 'all' ? allLabel : optionBaseLabel(option);
+
+            const countNode = document.createElement('span');
+            countNode.className = 'rooms-filter-chip__count';
+            countNode.textContent = '0';
+
+            chip.appendChild(labelNode);
+            chip.appendChild(countNode);
+            chip.addEventListener('click', () => {
+              if (chip.disabled) return;
+              select.value = option.value;
+              applyFilters();
+            });
+            container.appendChild(chip);
+          });
+        };
+
+        const updateFilterChips = (select, otherFilterValue, container) => {
+          if (!select || !container) return;
+          const selectedValue = String(select.value || 'all');
+
+          container.querySelectorAll('.rooms-filter-chip').forEach((chip) => {
+            const value = String(chip.dataset.value || 'all');
+            let count = 0;
+            if (value === 'all') {
+              count = countRoomsForAll(select.id, otherFilterValue);
+            } else {
+              count = countRoomsForOption(value, select.id, otherFilterValue);
+            }
+
+            chip.disabled = value !== 'all' && count === 0;
+            chip.classList.toggle('is-disabled', chip.disabled);
+            chip.classList.toggle('is-active', value === selectedValue);
+
+            const countNode = chip.querySelector('.rooms-filter-chip__count');
+            if (countNode) {
+              countNode.textContent = String(count);
+            }
+          });
+        };
+
+        const readUrlFilters = () => {
+          const params = new URLSearchParams(window.location.search);
+          const capacityValue = String(params.get('capacity') || 'all');
+          const typeValue = String(params.get('type') || 'all');
+          return { capacityValue, typeValue };
+        };
+
+        const writeUrlFilters = (capacity, type) => {
+          if (!history.replaceState) return;
+          const url = new URL(window.location.href);
+          if (capacity && capacity !== 'all') url.searchParams.set('capacity', capacity);
+          else url.searchParams.delete('capacity');
+          if (type && type !== 'all') url.searchParams.set('type', type);
+          else url.searchParams.delete('type');
+          history.replaceState(null, '', url.toString());
+        };
+
+        // Рахуємо кількість номерів для опції
+        const countRoomsForOption = (optionValue, selectId, otherFilterValue) => {
+          let count = 0;
+
+          roomItems.forEach(room => {
+            if (selectId === 'filterCapacity') {
+              if (room.capacity === String(optionValue)) {
+                if (otherFilterValue === 'all' || room.type === otherFilterValue) {
+                  count++;
+                }
+              }
+            } else {
+              if (room.type === optionValue) {
+                if (otherFilterValue === 'all' || room.capacity === String(otherFilterValue)) {
+                  count++;
+                }
+              }
+            }
+          });
+
+          return count;
+        };
+
+        // Оновлюємо стан опцій селекта
+        const updateSelectOptions = (select, otherFilterValue) => {
+          if (!select) return;
+
+          Array.from(select.options).forEach(option => {
+            if (option.value === 'all') return;
+
+            const count = countRoomsForOption(option.value, select.id, otherFilterValue);
+
+            option.disabled = count === 0;
+            const originalText = optionBaseLabel(option);
+            option.textContent = count > 0 ? `${originalText} (${count})` : `${originalText} — немає`;
+          });
+
+          if (select.value !== 'all') {
+            const activeOption = Array.from(select.options).find((opt) => opt.value === select.value);
+            if (!activeOption || activeOption.disabled) {
+              select.value = 'all';
+            }
+          }
+        };
+
+        // Застосовуємо фільтри
+        const applyFilters = (syncUrl = true) => {
+          const capacity = filterCapacity ? filterCapacity.value : 'all';
+          const type = filterType ? filterType.value : 'all';
+
+          let visibleCount = 0;
+
+          roomItems.forEach(room => {
+            const matchCapacity = capacity === 'all' || room.capacity === String(capacity);
+            const matchType = type === 'all' || room.type === type;
+            const isVisible = matchCapacity && matchType;
+
+            room.element.hidden = !isVisible;
+            if (isVisible) visibleCount++;
+          });
+
+          if (roomsCount) {
+            roomsCount.textContent = visibleCount;
+            roomsCount.closest('.rooms-filters__count').classList.toggle('rooms-filters__count--zero', visibleCount === 0);
+          }
+
+          if (roomsEmpty) {
+            setHidden(roomsEmpty, visibleCount !== 0);
+          }
+          if (roomsGrid) {
+            roomsGrid.style.display = '';
+          }
+
+          // Оновлюємо доступність опцій
+          updateSelectOptions(filterCapacity, type);
+          updateSelectOptions(filterType, capacity);
+          updateFilterChips(filterCapacity, type, capacityChips);
+          updateFilterChips(filterType, capacity, typeChips);
+
+          const normalizedCapacity = filterCapacity ? filterCapacity.value : capacity;
+          const normalizedType = filterType ? filterType.value : type;
+          if (normalizedCapacity !== capacity || normalizedType !== type) {
+            applyFilters(syncUrl);
+            return;
+          }
+
+          // Показуємо активні фільтри
+          updateActiveFilters(normalizedCapacity, normalizedType);
+
+          if (syncUrl) writeUrlFilters(normalizedCapacity, normalizedType);
+        };
+
+        // Оновлюємо відображення активних фільтрів
+        const updateActiveFilters = (capacity, type) => {
+          if (!activeFilters || !activeFilterTags) return;
+
+          const tags = [];
+
+          if (capacity !== 'all') {
+            tags.push({ filter: 'capacity', label: `${capacity} гостей`, value: capacity });
+          }
+
+          if (type !== 'all') {
+            tags.push({ filter: 'type', label: TYPE_LABELS[type] || type, value: type });
+          }
+
+          if (tags.length === 0) {
+            setHidden(activeFilters, true);
+            return;
+          }
+
+          setHidden(activeFilters, false);
+          activeFilterTags.innerHTML = tags.map(tag => `
+          <button class="rooms-filters__tag" data-filter="${tag.filter}">
+            ${tag.label}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        `).join('');
+
+          activeFilterTags.querySelectorAll('.rooms-filters__tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+              const filterName = tag.dataset.filter;
+              if (filterName === 'capacity' && filterCapacity) {
+                filterCapacity.value = 'all';
+              } else if (filterName === 'type' && filterType) {
+                filterType.value = 'all';
+              }
+              applyFilters();
+            });
+          });
+        };
+
+        // Ініціалізація фільтрів
+        if (filterCapacity) filterCapacity.addEventListener('change', applyFilters);
+        if (filterType) filterType.addEventListener('change', applyFilters);
+        if (resetFilters) {
+          resetFilters.addEventListener('click', () => {
+            if (filterCapacity) filterCapacity.value = 'all';
+            if (filterType) filterType.value = 'all';
+            applyFilters();
+          });
+        }
+
+        const initial = readUrlFilters();
+        if (filterCapacity && (initial.capacityValue === 'all' || Array.from(filterCapacity.options).some((opt) => opt.value === initial.capacityValue))) {
+          filterCapacity.value = initial.capacityValue;
+        }
+        if (filterType && (initial.typeValue === 'all' || Array.from(filterType.options).some((opt) => opt.value === initial.typeValue))) {
+          filterType.value = initial.typeValue;
+        }
+        renderFilterChips(filterCapacity, capacityChips, 'capacity', 'Усі гості');
+        renderFilterChips(filterType, typeChips, 'type', 'Усі типи');
+        applyFilters(false);
+
+        // ===== LAZY LOADING =====
+        const lazyImages = document.querySelectorAll('.room-card-new__image img, .rooms-hero__bg img');
+
+        if ('IntersectionObserver' in window) {
+          const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const img = entry.target;
+
+                // Якщо зображення ще не завантажене
+                if (img.dataset.src) {
+                  img.src = img.dataset.src;
+                  img.removeAttribute('data-src');
+                }
+
+                // Анімація появи
+                img.onload = () => {
+                  img.classList.add('loaded');
+                  // Видаляємо placeholder якщо є
+                  const placeholder = img.parentElement.querySelector('.image-placeholder');
+                  if (placeholder) {
+                    placeholder.style.opacity = '0';
+                    setTimeout(() => placeholder.remove(), 400);
+                  }
+                };
+
+                // Якщо вже завантажено з кешу
+                if (img.complete) {
+                  img.classList.add('loaded');
+                }
+
+                observer.unobserve(img);
+              }
+            });
+          }, {
+            rootMargin: '100px 0px', // Почати завантаження за 100px до появи
+            threshold: 0.01
+          });
+
+          lazyImages.forEach(img => {
+            img.classList.add('lazy-image');
+            imageObserver.observe(img);
+          });
+        } else {
+          // Fallback для старих браузерів
+          lazyImages.forEach(img => img.classList.add('loaded'));
+        }
+
+        // Прогресивне завантаження карток
+        const cards = document.querySelectorAll('.room-card-new');
+        if ('IntersectionObserver' in window) {
+          const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+              if (entry.isIntersecting) {
+                // Затримка для каскадної анімації
+                setTimeout(() => {
+                  entry.target.style.opacity = '1';
+                  entry.target.style.transform = 'translateY(0)';
+                }, index * 50);
+                cardObserver.unobserve(entry.target);
+              }
+            });
+          }, {
+            rootMargin: '50px 0px',
+            threshold: 0.1
+          });
+
+          cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            cardObserver.observe(card);
+          });
+        }
+      })();
+    </script>
+    <script src="/assets/js/app.js" defer></script>
+    <script>
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function () {
+          var s = document.createElement('script');
+          s.src = '/assets/js/easter-egg.js';
+          document.body.appendChild(s);
+        });
+      } else {
+        window.addEventListener('load', function () {
+          var s = document.createElement('script');
+          s.src = '/assets/js/easter-egg.js';
+          document.body.appendChild(s);
+        });
+      }
+    </script>
+  </body>
+
+</html>

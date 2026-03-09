@@ -1,0 +1,50 @@
+{
+    auto_https off
+    admin off
+}
+
+:{$SERVER_HTTP_PORT} {
+    root * {$SVH_ROOT}
+
+    encode zstd gzip
+
+    request_body {
+        max_size 512MB
+    }
+
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    }
+
+    @dot path_regexp dotfile ^/\\.
+    respond @dot 403
+
+    @private path /api/config.php /api/database.php
+    respond @private 403
+
+    @backup path_regexp backup ^/storage/backups/
+    respond @backup 403
+
+    @storagedata path_regexp storagedata ^/storage/data/
+    respond @storagedata 403
+
+    @rootarchive path_regexp rootarchive ^/[^/]+\\.(zip|tar|gz|tgz|7z|bak|old|sql|sqlite|db)$
+    respond @rootarchive 403
+
+    @devassets path_regexp devassets \\.(css|js|mjs|map)$
+    header @devassets Cache-Control "public, max-age=0, must-revalidate"
+
+    @adminui path /svh-ctrl-x7k9*
+    header @adminui X-Robots-Tag "noindex, nofollow, noarchive"
+
+    @static path_regexp static \\.(jpg|jpeg|gif|png|webp|avif|svg|ico|woff|woff2|ttf|otf)$
+    header @static Cache-Control "public, max-age=2592000, immutable"
+
+    php_server {
+        root {$SVH_ROOT}
+        try_files {path} {path}/ {path}.html /router.php?{query}
+    }
+}
