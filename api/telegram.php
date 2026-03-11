@@ -12,8 +12,10 @@
  */
 
 require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/storage.php';
+require_once __DIR__ . '/../includes/booking-workflow.php';
 
-if (send_api_headers(['GET', 'POST', 'OPTIONS'])) {
+if ((!defined('SVH_TG_LIBRARY_ONLY') || SVH_TG_LIBRARY_ONLY !== true) && send_api_headers(['GET', 'POST', 'OPTIONS'])) {
     exit;
 }
 
@@ -35,6 +37,104 @@ const TG_BOOKING_PICK_CONTEXT_FILE = DATA_DIR . 'telegram-booking-pick-context.j
 const TG_BOOKING_PICK_CONTEXT_TTL = 6 * 3600;
 const TG_DEVICE_ACCESS_FILE = DATA_DIR . 'telegram-admin-access.json';
 const TG_DEVICE_ACCESS_TTL = 30 * 24 * 3600;
+const TG_MINIAPP_ACCESS_TOKEN_TTL = TG_DEVICE_ACCESS_TTL;
+
+$GLOBALS['svh_tg_webhook_update_type'] = null;
+$GLOBALS['svh_tg_direct_response'] = null;
+$GLOBALS['svh_tg_debug_request_id'] = null;
+
+function tg_debug_log(string $message, array $context = []): void
+{
+    $line = '[' . gmdate('c') . '] ' . $message;
+    if (!empty($context)) {
+        $encoded = json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if (is_string($encoded) && $encoded !== '') {
+            $line .= ' ' . $encoded;
+        }
+    }
+
+    $logFile = rtrim(STORAGE_LOGS_DIR, '/\\') . DIRECTORY_SEPARATOR . 'telegram-webhook-debug.log';
+    @file_put_contents($logFile, $line . PHP_EOL, FILE_APPEND | LOCK_EX);
+}
+
+function tg_debug_request_id(): string
+{
+    $current = $GLOBALS['svh_tg_debug_request_id'] ?? null;
+    if (is_string($current) && $current !== '') {
+        return $current;
+    }
+
+    try {
+        $current = bin2hex(random_bytes(6));
+    } catch (Throwable $e) {
+        $current = (string) mt_rand(100000, 999999);
+    }
+
+    $GLOBALS['svh_tg_debug_request_id'] = $current;
+    return $current;
+}
+
+function tg_set_webhook_update_type(?string $type): void
+{
+    $GLOBALS['svh_tg_webhook_update_type'] = $type;
+}
+
+function tg_webhook_update_type(): ?string
+{
+    $type = $GLOBALS['svh_tg_webhook_update_type'] ?? null;
+    return is_string($type) && $type !== '' ? $type : null;
+}
+
+function tg_store_direct_response(array $payload): bool
+{
+    if (($GLOBALS['svh_tg_direct_response'] ?? null) !== null) {
+        return false;
+    }
+
+    $GLOBALS['svh_tg_direct_response'] = $payload;
+    return true;
+}
+
+function tg_take_direct_response(): ?array
+{
+    $payload = $GLOBALS['svh_tg_direct_response'] ?? null;
+    $GLOBALS['svh_tg_direct_response'] = null;
+    return is_array($payload) ? $payload : null;
+}
+
+function tg_maybe_queue_direct_message(string $chatId, string $text, ?array $replyMarkup = null, ?int $replyToMessageId = null): bool
+{
+    if (tg_webhook_update_type() !== 'message') {
+        return false;
+    }
+
+    $payload = [
+        'method' => 'sendMessage',
+        'chat_id' => $chatId,
+        'text' => $text,
+        'disable_web_page_preview' => true,
+    ];
+
+    if ($replyMarkup !== null) {
+        $payload['reply_markup'] = $replyMarkup;
+    }
+    if ($replyToMessageId !== null) {
+        $payload['reply_to_message_id'] = $replyToMessageId;
+        $payload['allow_sending_without_reply'] = true;
+    }
+
+    return tg_store_direct_response($payload);
+}
+
+function tg_finish_webhook_response(array $fallbackPayload, int $status = 200): void
+{
+    $directPayload = tg_take_direct_response();
+    if (is_array($directPayload)) {
+        json_response($directPayload, $status);
+    }
+
+    json_response($fallbackPayload, $status);
+}
 
 function tg_request_headers(): array
 {
@@ -328,6 +428,10 @@ function tg_send_message(string $chatId, string $text, ?array $replyMarkup = nul
             $payload['allow_sending_without_reply'] = 'true';
         }
 
+        if ($index === 0 && tg_maybe_queue_direct_message($chatId, $chunk, $replyMarkup, $replyToMessageId)) {
+            continue;
+        }
+
         tg_telegram_request('sendMessage', $payload);
     }
 }
@@ -342,6 +446,41 @@ function tg_answer_callback(string $callbackId, string $text = '', bool $alert =
         'text' => mb_substr($text, 0, 180),
         'show_alert' => $alert ? 'true' : 'false',
     ]);
+}
+
+function tg_edit_message_text(string $chatId, int $messageId, string $text, ?array $replyMarkup = null): bool
+{
+    if ($chatId === '' || $messageId <= 0) {
+        return false;
+    }
+
+    $chunks = tg_message_chunks($text);
+    if (count($chunks) !== 1) {
+        return false;
+    }
+
+    $payload = [
+        'chat_id' => $chatId,
+        'message_id' => $messageId,
+        'text' => $chunks[0],
+        'disable_web_page_preview' => 'true',
+    ];
+
+    if ($replyMarkup !== null) {
+        $payload['reply_markup'] = json_encode($replyMarkup, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    $response = tg_telegram_request('editMessageText', $payload);
+    if (!is_array($response)) {
+        return false;
+    }
+
+    if (($response['ok'] ?? false) === true) {
+        return true;
+    }
+
+    $description = strtolower(trim((string) ($response['description'] ?? '')));
+    return $description !== '' && strpos($description, 'message is not modified') !== false;
 }
 
 function tg_remove_callback_keyboard(string $chatId, int $messageId): void
@@ -1218,40 +1357,65 @@ function tg_main_keyboard(): array
     return [
         'keyboard' => [
             [
-                ['text' => '📋 Відгуки'],
+                ['text' => '📲 Telegram App'],
                 ['text' => '📅 Заявки'],
             ],
             [
+                ['text' => '📋 Відгуки'],
                 ['text' => '📌 Остання заявка'],
-                ['text' => '✉️ Відповісти на заявку'],
             ],
             [
                 ['text' => '🔎 Обрати заявку'],
+                ['text' => '✉️ Відповісти на заявку'],
+            ],
+            [
                 ['text' => '🏠 Змінити номер'],
-            ],
-            [
-                ['text' => '🟢 Заїзд сьогодні'],
-                ['text' => '🟠 Заїзд завтра'],
-            ],
-            [
-                ['text' => '🔵 Виїзд сьогодні'],
                 ['text' => '🔍 Пошук заявки'],
             ],
             [
                 ['text' => '📊 Сьогодні'],
-                ['text' => '🧾 Останні дії'],
+                ['text' => '🌤 Завтра'],
+            ],
+            [
+                ['text' => '🟢 Заїзди сьогодні'],
+                ['text' => '🟠 Заїзди завтра'],
+            ],
+            [
+                ['text' => '🔵 Виїзди сьогодні'],
+                ['text' => '🏠 Вільні номери'],
+            ],
+            [
+                ['text' => 'ℹ️ Статус'],
+                ['text' => '❓ Допомога'],
             ],
             [
                 ['text' => 'Скасувати'],
-                ['text' => 'ℹ️ Статус'],
-            ],
-            [
-                ['text' => '❓ Допомога'],
             ],
         ],
         'resize_keyboard' => true,
         'one_time_keyboard' => false,
+        'is_persistent' => true,
+        'input_field_placeholder' => 'Оберіть дію або введіть команду',
     ];
+}
+
+function tg_menu_text(): string
+{
+    return implode("\n", [
+        "Головне меню SvityazHOME:",
+        "📲 Telegram App - повний список заявок у вікні Telegram",
+        "📅 Заявки - список нових бронювань",
+        "📋 Відгуки - pending відгуки на модерацію",
+        "📌 Остання заявка - швидко відкрити останню бронь",
+        "✉️ Відповісти на заявку - оберіть заявку, потім надішліть текст",
+        "🏠 Змінити номер - оберіть заявку і новий номер кімнати",
+        "📊 Сьогодні / 🌤 Завтра - короткий календар",
+        "🟢 Заїзди сьогодні / 🟠 Заїзди завтра / 🔵 Виїзди сьогодні",
+        "🏠 Вільні номери - після кнопки надішліть дати: 2026-07-14 2026-07-18",
+        "🔍 Пошук заявки - можна шукати за ID, телефоном або ім'ям",
+        "",
+        "Для повної довідки: /help або /app",
+    ]);
 }
 
 function tg_reply_format_help(): string
@@ -1267,21 +1431,39 @@ function tg_reply_format_help(): string
 function tg_help_text(): string
 {
     return implode("\n", [
-        "SvityazHOME бот для мами:",
-        "Найпростіше: натискайте кнопки внизу 👇",
+        "SvityazHOME Telegram-бот",
+        "Основні дії винесені в меню внизу.",
         "",
-        "Можна писати і текстом:",
-        "Відгуки",
+        "Що робити щодня:",
+        "Telegram App - заявка відкривається в окремому вікні Telegram",
+        "Заявки - нові бронювання",
+        "Відгуки - модерація pending відгуків",
+        "Остання заявка - відкрити останню бронь",
+        "Обрати заявку - показати останні бронювання і вибрати одну кнопкою",
+        "Відповісти на заявку - вибір заявки, далі просто пишете текст",
+        "Змінити номер - вибір заявки, далі вибір номера 1-20",
+        "Сьогодні / Завтра - короткі підсумки по календарю",
+        "Вільні номери - перевірка діапазону дат",
+        "",
+        "Приклади текстом:",
         "Заявки",
-        "Заїзд сьогодні / завтра",
-        "Виїзд сьогодні",
-        "Останні дії",
-        "Пошук 093... (телефон/ім'я/ID)",
+        "Відгуки",
+        "Заїзди сьогодні",
+        "Заїзди завтра",
+        "Виїзди сьогодні",
+        "Вільні номери 2026-07-14 2026-07-18",
+        "Перевірити room-3 2026-07-14 2026-07-18",
+        "Пошук 093... або BK20260714-ABC123",
         "Схвалити 123 / Відхилити 123",
-        "Для заявок ID вводити не потрібно: натисніть кнопку або після списку надішліть цифру 1-5.",
+        "Після списку заявок можна просто надіслати цифру 1-5.",
         "",
-        "Службові команди (за потреби):",
-        "/pending [N], /bookings [N], /latest, /booking ID, /reply ... , /change_room ... , /find ... , /today, /arrivals [today|tomorrow], /departures [today|tomorrow], /actions [N], /status, /whoami",
+        "Службові команди:",
+        "/menu, /help, /app, /status, /today, /tomorrow",
+        "/pending [N], /bookings [N], /latest, /booking ID",
+        "/reply, /change_room, /find ...",
+        "/arrivals [today|tomorrow], /departures [today|tomorrow]",
+        "/availability room-3 2026-07-14 2026-07-18",
+        "/free_rooms 2026-07-14 2026-07-18, /actions [N], /whoami",
         "/login пароль (доступ з нового пристрою), /logout",
     ]);
 }
@@ -1289,6 +1471,86 @@ function tg_help_text(): string
 function tg_admin_list_configured(): bool
 {
     return count(tg_admin_chat_ids()) > 0;
+}
+
+function tg_miniapp_base_url(): string
+{
+    $url = trim((string) TELEGRAM_MINIAPP_URL);
+    if ($url === '') {
+        $url = rtrim(SITE_URL, '/') . '/telegram-app/';
+    }
+
+    return $url;
+}
+
+function tg_miniapp_auth_params(?string $chatId = null): array
+{
+    $chatId = trim((string) ($chatId ?? ''));
+    if ($chatId === '' || preg_match('/^-?\d{3,20}$/', $chatId) !== 1) {
+        return [];
+    }
+
+    $accessToken = telegram_miniapp_access_token_issue($chatId, TG_MINIAPP_ACCESS_TOKEN_TTL);
+    if ($accessToken === '') {
+        return [];
+    }
+
+    return ['access_token' => $accessToken];
+}
+
+function tg_miniapp_url(array $params = [], ?string $chatId = null): string
+{
+    $baseUrl = tg_miniapp_base_url();
+    $query = tg_miniapp_auth_params($chatId);
+    if (empty($params) && empty($query)) {
+        return $baseUrl;
+    }
+
+    foreach ($params as $key => $value) {
+        $name = trim((string) $key);
+        $current = trim((string) $value);
+        if ($name === '' || $current === '' || $name === 'access_token') {
+            continue;
+        }
+        $query[$name] = $current;
+    }
+
+    if (empty($query)) {
+        return $baseUrl;
+    }
+
+    $separator = strpos($baseUrl, '?') === false ? '?' : '&';
+    return $baseUrl . $separator . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+}
+
+function tg_miniapp_entry_keyboard(?string $bookingId = null, ?string $chatId = null): array
+{
+    $bookingId = strtoupper(trim((string) ($bookingId ?? '')));
+    $rows = [[[
+        'text' => $bookingId !== '' ? '📲 Відкрити заявку в Telegram App' : '📲 Відкрити Telegram App',
+        'web_app' => [
+            'url' => tg_miniapp_url($bookingId !== '' ? ['booking_id' => $bookingId] : [], $chatId),
+        ],
+    ]]];
+
+    if ($bookingId !== '') {
+        $rows[] = [[
+            'text' => '🔗 Відкрити в адмінці',
+            'url' => rtrim(SITE_URL, '/') . '/svh-ctrl-x7k9/requests.php#booking-' . rawurlencode($bookingId),
+        ]];
+    }
+
+    return ['inline_keyboard' => $rows];
+}
+
+function tg_send_miniapp_entry(string $chatId, ?string $bookingId = null, ?int $replyToMessageId = null): void
+{
+    $bookingId = strtoupper(trim((string) ($bookingId ?? '')));
+    $text = $bookingId !== ''
+        ? "Відкрийте цю заявку в Telegram App.\nТам буде повна картка і швидкі дії."
+        : "Відкрийте Telegram App для заявок.\nТам є список, пошук, деталі і зміна статусу.";
+
+    tg_send_message($chatId, $text, tg_miniapp_entry_keyboard($bookingId, $chatId), $replyToMessageId);
 }
 
 function tg_parse_command(string $text): array
@@ -1318,11 +1580,17 @@ function tg_parse_human_command(string $text): array
     $normalized = preg_replace('/\s+/u', ' ', $normalized) ?? $normalized;
     $plain = trim(preg_replace('/^[^\p{L}\p{N}]+/u', '', $normalized) ?? $normalized);
 
-    if (in_array($plain, ['допомога', 'help', 'меню', 'menu', 'старт', 'start'], true)) {
+    if (in_array($plain, ['меню', 'menu', 'старт', 'start'], true)) {
+        return ['menu', ''];
+    }
+    if (in_array($plain, ['допомога', 'help'], true)) {
         return ['help', ''];
     }
     if (in_array($plain, ['відгуки', 'pending', 'пендінг'], true)) {
         return ['pending', (string) TG_DEFAULT_LIST_LIMIT];
+    }
+    if (in_array($plain, ['telegram app', 'app', 'додаток', 'телеграм додаток', 'telegram mini app'], true)) {
+        return ['app', ''];
     }
     if (in_array($plain, ['заявки', 'заявка', 'бронювання', 'bookings', 'броні'], true)) {
         return ['bookings', (string) TG_DEFAULT_LIST_LIMIT];
@@ -1336,6 +1604,9 @@ function tg_parse_human_command(string $text): array
     if (in_array($plain, ['відповісти гостю', 'відповісти на заявку', 'відповідь гостю', 'відповідь', 'reply'], true)) {
         return ['reply', ''];
     }
+    if (in_array($plain, ['відповісти'], true)) {
+        return ['reply', ''];
+    }
     if (in_array($plain, ['змінити номер', 'change room', 'change_room'], true)) {
         return ['change_room', ''];
     }
@@ -1347,6 +1618,15 @@ function tg_parse_human_command(string $text): array
     }
     if (in_array($plain, ['виїзд сьогодні', 'виїзди сьогодні', 'departures today'], true)) {
         return ['departures_today', ''];
+    }
+    if (in_array($plain, ['завтра', 'календар завтра', 'tomorrow'], true)) {
+        return ['tomorrow', ''];
+    }
+    if (in_array($plain, ['вільні номери', 'вільні номера', 'free rooms', 'free_rooms'], true)) {
+        return ['free_rooms', ''];
+    }
+    if (in_array($plain, ['перевірити дати', 'перевірити номер', 'availability'], true)) {
+        return ['availability', ''];
     }
     if (in_array($plain, ['останні дії', 'журнал', 'логи', 'actions', 'адмін дії'], true)) {
         return ['actions', (string) TG_DEFAULT_LIST_LIMIT];
@@ -1394,6 +1674,12 @@ function tg_parse_human_command(string $text): array
     }
     if (preg_match('/^(?:виїзд|виїзди|departures?)\s+(сьогодні|today)$/iu', $raw) === 1) {
         return ['departures_today', ''];
+    }
+    if (preg_match('/^(?:вільні\s+номери|вільні\s+номера|free[_\s-]?rooms?)\s+(\d{4}-\d{2}-\d{2})\s+(\d{4}-\d{2}-\d{2})$/iu', $raw, $match) === 1) {
+        return ['free_rooms', trim((string) $match[1]) . ' ' . trim((string) $match[2])];
+    }
+    if (preg_match('/^(?:перевірити|availability|номер)\s+([a-z0-9-]{1,20})\s+(\d{4}-\d{2}-\d{2})\s+(\d{4}-\d{2}-\d{2})$/iu', $raw, $match) === 1) {
+        return ['availability', trim((string) $match[1]) . ' ' . trim((string) $match[2]) . ' ' . trim((string) $match[3])];
     }
     if (preg_match('/^(?:дії|actions?|журнал|логи)\s*(\d{1,2})?$/iu', $raw, $match) === 1) {
         return ['actions', trim((string) ($match[1] ?? ''))];
@@ -1467,11 +1753,30 @@ function tg_change_booking_room(PDO $pdo, string $bookingId, string $roomCode): 
         return ['ok' => false, 'message' => 'Некоректний номер. Вкажіть 1..20 або room-1..room-20.'];
     }
 
+    $checkinDate = (string) ($booking['checkin_date'] ?? '');
+    $checkoutDate = (string) ($booking['checkout_date'] ?? '');
+    $conflicts = svh_find_room_conflicts($pdo, $normalizedRoom, $checkinDate, $checkoutDate, (string) ($booking['booking_id'] ?? ''));
+    if (($conflicts['has_conflict'] ?? false) === true) {
+        $firstBooking = $conflicts['bookings'][0] ?? null;
+        $firstEvent = $conflicts['events'][0] ?? null;
+        if (is_array($firstBooking)) {
+            return [
+                'ok' => false,
+                'message' => 'Номер зайнятий: ' . (string) ($firstBooking['checkin_date'] ?? '') . ' → ' . (string) ($firstBooking['checkout_date'] ?? '') . ' (' . (string) ($firstBooking['status'] ?? '') . ').',
+            ];
+        }
+        if (is_array($firstEvent)) {
+            return [
+                'ok' => false,
+                'message' => 'Номер заблокований: ' . (string) ($firstEvent['start_date'] ?? '') . ' → ' . (string) ($firstEvent['end_date'] ?? '') . '.',
+            ];
+        }
+    }
+
     $stmt = $pdo->prepare("
         UPDATE bookings
-        SET room_code = :room_code, status = CASE WHEN status IN ('new','new_email_failed') THEN status ELSE 'new' END
+        SET room_code = :room_code
         WHERE booking_id = :booking_id
-        LIMIT 1
     ");
     $ok = $stmt->execute([
         ':room_code' => $normalizedRoom,
@@ -1584,7 +1889,7 @@ function tg_handle_logout_command(string $chatId, Database $db): void
     tg_send_message($chatId, 'Активного доступу по паролю не було.');
 }
 
-function tg_booking_select_keyboard(array $rows, string $action = 'booking', string $refreshAction = 'apps:list'): ?array
+function tg_booking_select_keyboard(array $rows, string $action = 'booking', string $refreshAction = 'apps:list', ?string $chatId = null): ?array
 {
     if (empty($rows)) {
         return null;
@@ -1612,6 +1917,16 @@ function tg_booking_select_keyboard(array $rows, string $action = 'booking', str
         $checkout = (string) ($row['checkout_date'] ?? '');
         $text = ($index + 1) . '. ' . $name . ' • ' . $checkin . '→' . $checkout;
 
+        if ($action === 'booking') {
+            $buttons[] = [[
+                'text' => $text,
+                'web_app' => [
+                    'url' => tg_miniapp_url(['booking_id' => $bookingId], $chatId),
+                ],
+            ]];
+            continue;
+        }
+
         $buttons[] = [[
             'text' => $text,
             'callback_data' => $action . ':' . $bookingId,
@@ -1620,6 +1935,15 @@ function tg_booking_select_keyboard(array $rows, string $action = 'booking', str
 
     if (empty($buttons)) {
         return null;
+    }
+
+    if ($action === 'booking') {
+        $buttons[] = [[
+            'text' => '📲 Усі заявки в Telegram App',
+            'web_app' => [
+                'url' => tg_miniapp_url([], $chatId),
+            ],
+        ]];
     }
 
     $buttons[] = [[
@@ -1663,14 +1987,25 @@ function tg_room_select_keyboard(string $bookingId, ?string $currentRoomCode = n
     ];
 }
 
-function tg_booking_actions_keyboard(array $booking): array
+function tg_booking_actions_keyboard(array $booking, ?string $chatId = null): array
 {
     $bookingId = strtoupper(trim((string) ($booking['booking_id'] ?? '')));
     $email = tg_normalize_email((string) ($booking['email'] ?? ''));
     $phoneDial = tg_normalize_phone_dial((string) ($booking['phone'] ?? ''));
     $status = strtolower(trim((string) ($booking['status'] ?? '')));
+    $adminUrl = rtrim(SITE_URL, '/') . '/svh-ctrl-x7k9/requests.php#booking-' . rawurlencode($bookingId);
 
     $rows = [];
+    $rows[] = [[
+        'text' => '📲 Telegram App',
+        'web_app' => [
+            'url' => tg_miniapp_url(['booking_id' => $bookingId], $chatId),
+        ],
+    ], [
+        'text' => '🔗 Адмінка',
+        'url' => $adminUrl,
+    ]];
+
     if ($email !== null) {
         $rows[] = [[
             'text' => '✉️ Відповісти на email',
@@ -1800,34 +2135,8 @@ function tg_today_item_count(array $items, string $today): int
 
 function tg_today_summary(PDO $pdo, string $reviewsFile): string
 {
-    $today = date('Y-m-d');
-    $likeDay = $today . '%';
-
-    $stmt = $pdo->prepare("
-        SELECT
-            SUM(CASE WHEN created_at LIKE :day THEN 1 ELSE 0 END) AS bookings_today,
-            SUM(CASE WHEN created_at LIKE :day AND status IN ('new','new_email_failed') THEN 1 ELSE 0 END) AS bookings_new_today,
-            SUM(CASE WHEN created_at LIKE :day AND status = 'processed' THEN 1 ELSE 0 END) AS bookings_processed_today
-        FROM bookings
-        WHERE honeypot_triggered = 0
-    ");
-    $stmt->execute([':day' => $likeDay]);
-    $row = $stmt->fetch() ?: [];
-
-    $reviews = tg_read_reviews_data($reviewsFile);
-    $reviewsToday = tg_today_item_count($reviews['approved'], $today);
-    $pendingToday = tg_today_item_count($reviews['pending'], $today);
-    $questionsToday = tg_today_item_count($reviews['questions'], $today);
-
-    return implode("\n", [
-        "📊 Звіт за {$today}:",
-        'Заявки: ' . (int) ($row['bookings_today'] ?? 0),
-        'Нові заявки: ' . (int) ($row['bookings_new_today'] ?? 0),
-        'Оброблені заявки: ' . (int) ($row['bookings_processed_today'] ?? 0),
-        'Відгуки сьогодні: ' . $reviewsToday,
-        'Pending сьогодні: ' . $pendingToday,
-        'Питання сьогодні: ' . $questionsToday,
-    ]);
+    unset($reviewsFile);
+    return tg_day_calendar_summary_text($pdo, date('Y-m-d'), '📊 Календар на сьогодні');
 }
 
 function tg_parse_day_selector(string $args, string $defaultToken = 'today'): ?array
@@ -1864,6 +2173,174 @@ function tg_parse_day_selector(string $args, string $defaultToken = 'today'): ?a
     ];
 }
 
+function tg_room_short_label(string $roomCode, array $catalog): string
+{
+    $room = $catalog[$roomCode] ?? null;
+    $title = trim((string) ($room['title'] ?? ''));
+    return $title !== '' ? $title : $roomCode;
+}
+
+function tg_calendar_status_label(string $status): string
+{
+    $normalized = strtolower(trim($status));
+    if ($normalized === 'confirmed') {
+        return 'зайнято';
+    }
+    if ($normalized === 'waiting') {
+        return 'очікує';
+    }
+    if ($normalized === 'blocked') {
+        return 'заблоковано';
+    }
+
+    return 'вільно';
+}
+
+function tg_day_calendar_summary_text(PDO $pdo, string $date, string $title): string
+{
+    $summary = svh_day_occupancy_summary($pdo, $date);
+    $catalog = svh_room_catalog();
+    $lines = [
+        $title,
+        $date,
+        '',
+    ];
+
+    foreach ($catalog as $roomCode => $room) {
+        $state = $summary['rooms'][$roomCode] ?? null;
+        $status = strtolower(trim((string) ($state['status'] ?? 'free')));
+        $line = tg_room_short_label($roomCode, $catalog) . ' — ' . tg_calendar_status_label($status);
+
+        if ($status === 'confirmed' || $status === 'waiting') {
+            $booking = $state['bookings'][0] ?? null;
+            if (is_array($booking)) {
+                $line .= ' · ' . tg_safe_summary((string) ($booking['name'] ?? 'Гість'), 32);
+                $line .= ' · до ' . (string) ($booking['checkout_date'] ?? '');
+            }
+        } elseif ($status === 'blocked') {
+            $event = $state['events'][0] ?? null;
+            if (is_array($event)) {
+                $line .= ' · ' . tg_safe_summary((string) ($event['title'] ?? 'Блок'), 32);
+                $line .= ' · до ' . (string) ($event['end_date'] ?? '');
+            }
+        }
+
+        $lines[] = $line;
+    }
+
+    $lines[] = '';
+    $lines[] = 'Заїзди: ' . count($summary['arrivals'] ?? []);
+    $lines[] = 'Виїзди: ' . count($summary['departures'] ?? []);
+
+    return implode("\n", $lines);
+}
+
+function tg_tomorrow_summary(PDO $pdo): string
+{
+    $date = svh_date_add_days(date('Y-m-d'), 1);
+    return tg_day_calendar_summary_text($pdo, $date, '🌤 Календар на завтра');
+}
+
+function tg_parse_availability_args(string $args): array
+{
+    $parts = preg_split('/\s+/u', trim($args), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    if (count($parts) === 2) {
+        return [null, (string) $parts[0], (string) $parts[1]];
+    }
+    if (count($parts) === 3) {
+        $roomCode = svh_normalize_room_code((string) $parts[0]);
+        return [$roomCode, (string) $parts[1], (string) $parts[2]];
+    }
+
+    return [null, '', ''];
+}
+
+function tg_send_room_availability_check(string $chatId, PDO $pdo, string $args): void
+{
+    [$roomCode, $checkinDate, $checkoutDate] = tg_parse_availability_args($args);
+    if ($roomCode === null || !svh_is_iso_date($checkinDate) || !svh_is_iso_date($checkoutDate) || $checkoutDate <= $checkinDate) {
+        tg_send_message($chatId, 'Формат: /availability room-3 2026-07-14 2026-07-18');
+        return;
+    }
+
+    $availability = svh_room_range_availability($pdo, $checkinDate, $checkoutDate, $roomCode);
+    $roomState = $availability[$roomCode] ?? null;
+    if (!is_array($roomState)) {
+        tg_send_message($chatId, 'Не вдалося перевірити номер на ці дати.');
+        return;
+    }
+
+    $catalog = svh_room_catalog();
+    $title = tg_room_short_label($roomCode, $catalog);
+    $status = strtolower(trim((string) ($roomState['status'] ?? 'free')));
+    if ($status === 'free') {
+        tg_send_message($chatId, "{$title} вільний на {$checkinDate} → {$checkoutDate}.");
+        return;
+    }
+
+    if ($status === 'blocked') {
+        $event = $roomState['events'][0] ?? null;
+        $line = "{$title} заблокований на {$checkinDate} → {$checkoutDate}.";
+        if (is_array($event)) {
+            $line .= "\nБлок: " . ((string) ($event['start_date'] ?? '')) . ' → ' . ((string) ($event['end_date'] ?? ''));
+            $line .= "\nПричина: " . tg_safe_summary((string) ($event['title'] ?? 'Блок'), 80);
+        }
+        tg_send_message($chatId, $line);
+        return;
+    }
+
+    $booking = $roomState['bookings'][0] ?? null;
+    $lines = [
+        "{$title} " . tg_calendar_status_label($status) . " на {$checkinDate} → {$checkoutDate}.",
+    ];
+    if (is_array($booking)) {
+        $lines[] = 'Конфлікт: ' . (string) ($booking['checkin_date'] ?? '') . ' → ' . (string) ($booking['checkout_date'] ?? '');
+        $lines[] = 'Статус: ' . (string) ($booking['status'] ?? '');
+        $lines[] = 'Гість: ' . tg_safe_summary((string) ($booking['name'] ?? 'Гість'), 60);
+    }
+    tg_send_message($chatId, implode("\n", $lines));
+}
+
+function tg_send_free_rooms_for_range(string $chatId, PDO $pdo, string $args): void
+{
+    [, $checkinDate, $checkoutDate] = tg_parse_availability_args($args);
+    if (!svh_is_iso_date($checkinDate) || !svh_is_iso_date($checkoutDate) || $checkoutDate <= $checkinDate) {
+        tg_send_message($chatId, 'Формат: /free_rooms 2026-07-14 2026-07-18');
+        return;
+    }
+
+    $availability = svh_room_range_availability($pdo, $checkinDate, $checkoutDate);
+    if (empty($availability)) {
+        tg_send_message($chatId, 'Не вдалося побудувати список номерів на цей діапазон.');
+        return;
+    }
+
+    $groups = [
+        'free' => [],
+        'waiting' => [],
+        'confirmed' => [],
+        'blocked' => [],
+    ];
+    $catalog = svh_room_catalog();
+    foreach ($availability as $roomCode => $roomState) {
+        $status = strtolower(trim((string) ($roomState['status'] ?? 'free')));
+        if (!array_key_exists($status, $groups)) {
+            $status = 'free';
+        }
+        $groups[$status][] = tg_room_short_label($roomCode, $catalog);
+    }
+
+    $lines = [
+        "🏠 Номери на {$checkinDate} → {$checkoutDate}",
+        'Вільно: ' . (!empty($groups['free']) ? implode(', ', $groups['free']) : '—'),
+        'Очікує: ' . (!empty($groups['waiting']) ? implode(', ', $groups['waiting']) : '—'),
+        'Зайнято: ' . (!empty($groups['confirmed']) ? implode(', ', $groups['confirmed']) : '—'),
+        'Блок: ' . (!empty($groups['blocked']) ? implode(', ', $groups['blocked']) : '—'),
+    ];
+
+    tg_send_message($chatId, implode("\n", $lines));
+}
+
 function tg_booking_list_for_date(PDO $pdo, string $dateColumn, string $date, int $limit = TG_MAX_LIST_LIMIT): array
 {
     if (!in_array($dateColumn, ['checkin_date', 'checkout_date'], true)) {
@@ -1878,6 +2355,7 @@ function tg_booking_list_for_date(PDO $pdo, string $dateColumn, string $date, in
         SELECT booking_id, name, phone, email, checkin_date, checkout_date, guests, room_code, status, created_at
         FROM bookings
         WHERE honeypot_triggered = 0
+          AND " . svh_active_booking_where_sql() . "
           AND substr({$dateColumn}, 1, 10) = :target_date
         ORDER BY datetime(created_at) DESC
         LIMIT :limit
@@ -1906,8 +2384,8 @@ function tg_send_bookings_for_day(
 
     tg_send_message(
         $chatId,
-        "{$title} ({$date}): " . count($rows) . "\nНатисніть заявку для деталей.",
-        tg_booking_select_keyboard($rows, 'booking', $refreshAction)
+        "{$title} ({$date}): " . count($rows) . "\nНатисніть заявку: вона відкриється в Telegram App.",
+        tg_booking_select_keyboard($rows, 'booking', $refreshAction, $chatId)
     );
 }
 
@@ -1939,25 +2417,20 @@ function tg_send_departures_bookings(string $chatId, PDO $pdo, string $args, str
 {
     $selector = tg_parse_day_selector($args, $defaultToken);
     if (!is_array($selector)) {
-        tg_send_message($chatId, "Параметр має бути: today (або сьогодні).");
+        tg_send_message($chatId, "Параметр має бути: today|tomorrow (або сьогодні|завтра).");
         return;
     }
 
     $token = (string) ($selector['token'] ?? 'today');
-    if ($token !== 'today') {
-        tg_send_message($chatId, "Для виїзду зараз доступно тільки сьогодні (today).");
-        return;
-    }
-
     $date = (string) ($selector['date'] ?? date('Y-m-d'));
     tg_send_bookings_for_day(
         $chatId,
         $pdo,
         'checkout_date',
         $date,
-        '🔵 Виїзди сьогодні',
-        'Виїздів сьогодні не знайдено',
-        'departures:today'
+        $token === 'tomorrow' ? '🟣 Виїзди завтра' : '🔵 Виїзди сьогодні',
+        'Виїздів ' . ($token === 'tomorrow' ? 'завтра' : 'сьогодні') . ' не знайдено',
+        'departures:' . $token
     );
 }
 
@@ -2077,9 +2550,9 @@ function tg_send_booking_search_results(string $chatId, PDO $pdo, string $query)
         $phone = trim((string) ($row['phone'] ?? ''));
         $lines[] = ($index + 1) . ". {$bookingId} | {$name}" . ($phone !== '' ? " | {$phone}" : '');
     }
-    $lines[] = 'Відкрийте деталі кнопкою або напишіть номер зі списку.';
+    $lines[] = 'Кнопка відкриє заявку в Telegram App, або напишіть номер зі списку.';
 
-    tg_send_message($chatId, implode("\n", $lines), tg_booking_select_keyboard($rows, 'booking', 'apps:list'));
+    tg_send_message($chatId, implode("\n", $lines), tg_booking_select_keyboard($rows, 'booking', 'apps:list', $chatId));
 }
 
 function tg_is_booking_new_status(string $status): bool
@@ -2105,7 +2578,6 @@ function tg_update_booking_status(PDO $pdo, string $bookingId, string $status): 
         UPDATE bookings
         SET status = :status
         WHERE booking_id = :booking_id
-        LIMIT 1
     ");
     $ok = $stmt->execute([
         ':status' => $target,
@@ -2192,9 +2664,13 @@ function tg_send_bookings(string $chatId, PDO $pdo, string $args, string $mode =
             $roomCode
         );
     }
-    $lines[] = 'Можна натиснути кнопку або надіслати номер зі списку (1-' . count($rows) . ').';
+    if ($callbackAction === 'booking') {
+        $lines[] = 'Кнопка заявки відкриє її в Telegram App. Або надішліть номер зі списку (1-' . count($rows) . ').';
+    } else {
+        $lines[] = 'Можна натиснути кнопку або надіслати номер зі списку (1-' . count($rows) . ').';
+    }
 
-    tg_send_message($chatId, implode("\n", $lines), tg_booking_select_keyboard($rows, $callbackAction, $refreshAction));
+    tg_send_message($chatId, implode("\n", $lines), tg_booking_select_keyboard($rows, $callbackAction, $refreshAction, $chatId));
 }
 
 function tg_send_latest_booking(string $chatId, PDO $pdo): void
@@ -2218,21 +2694,8 @@ function tg_send_latest_booking(string $chatId, PDO $pdo): void
     tg_send_booking_details($chatId, $pdo, $bookingId, true);
 }
 
-function tg_send_booking_details(string $chatId, PDO $pdo, string $bookingId, bool $withActions = true): void
+function tg_booking_details_text(array $row): string
 {
-    $bookingId = trim($bookingId);
-    if ($bookingId === '') {
-        tg_send_message($chatId, 'Оберіть заявку зі списку нижче:');
-        tg_send_bookings($chatId, $pdo, (string) TG_DEFAULT_LIST_LIMIT, 'booking');
-        return;
-    }
-
-    $row = tg_booking_by_id($pdo, $bookingId);
-    if (!$row) {
-        tg_send_message($chatId, 'Бронювання не знайдено. Формат: BKYYYYMMDD-XXXXXX');
-        return;
-    }
-
     $message = trim((string) ($row['message'] ?? ''));
     if ($message === '') {
         $message = '—';
@@ -2264,11 +2727,32 @@ function tg_send_booking_details(string $chatId, PDO $pdo, string $bookingId, bo
         'Коментар: ' . $message,
     ];
 
-    tg_send_message(
-        $chatId,
-        implode("\n", $lines),
-        $withActions ? tg_booking_actions_keyboard($row) : null
-    );
+    return implode("\n", $lines);
+}
+
+function tg_send_booking_details(string $chatId, PDO $pdo, string $bookingId, bool $withActions = true, ?int $editMessageId = null): void
+{
+    $bookingId = trim($bookingId);
+    if ($bookingId === '') {
+        tg_send_message($chatId, 'Оберіть заявку зі списку нижче:');
+        tg_send_bookings($chatId, $pdo, (string) TG_DEFAULT_LIST_LIMIT, 'booking');
+        return;
+    }
+
+    $row = tg_booking_by_id($pdo, $bookingId);
+    if (!$row) {
+        tg_send_message($chatId, 'Бронювання не знайдено. Формат: BKYYYYMMDD-XXXXXX');
+        return;
+    }
+
+    $messageText = tg_booking_details_text($row);
+    $replyMarkup = $withActions ? tg_booking_actions_keyboard($row, $chatId) : null;
+
+    if ($editMessageId !== null && tg_edit_message_text($chatId, $editMessageId, $messageText, $replyMarkup)) {
+        return;
+    }
+
+    tg_send_message($chatId, $messageText, $replyMarkup);
 }
 
 function tg_send_reply_for_booking(string $chatId, PDO $pdo, Database $db, string $bookingId, string $replyText): void
@@ -2498,8 +2982,8 @@ function tg_handle_callback_query(array $callback, PDO $pdo, Database $db, strin
 
     if (preg_match('/^booking:(BK\d{8}-[A-Z0-9]{6})$/', $data, $match) === 1) {
         $bookingId = strtoupper($match[1]);
-        tg_answer_callback($callbackId, 'Заявку відкрито', false);
-        tg_send_booking_details($chatId, $pdo, $bookingId, true);
+        tg_answer_callback($callbackId, 'Надсилаю кнопку для відкриття', false);
+        tg_send_miniapp_entry($chatId, $bookingId);
         return;
     }
 
@@ -2580,6 +3064,12 @@ function tg_handle_callback_query(array $callback, PDO $pdo, Database $db, strin
     if ($data === 'departures:today') {
         tg_answer_callback($callbackId, 'Оновлено', false);
         tg_send_departures_bookings($chatId, $pdo, 'today', 'today');
+        return;
+    }
+
+    if ($data === 'departures:tomorrow') {
+        tg_answer_callback($callbackId, 'Оновлено', false);
+        tg_send_departures_bookings($chatId, $pdo, 'tomorrow', 'tomorrow');
         return;
     }
 
@@ -2759,8 +3249,15 @@ function tg_handle_message(array $message, PDO $pdo, Database $db, string $revie
     switch ($command) {
         case 'start':
         case 'menu':
+            tg_send_message($chatId, tg_menu_text(), tg_main_keyboard(), $messageId);
+            return;
+
         case 'help':
             tg_send_message($chatId, tg_help_text(), tg_main_keyboard(), $messageId);
+            return;
+
+        case 'app':
+            tg_send_miniapp_entry($chatId, trim($args) !== '' ? trim($args) : null, $messageId);
             return;
 
         case 'status':
@@ -2769,6 +3266,10 @@ function tg_handle_message(array $message, PDO $pdo, Database $db, string $revie
 
         case 'today':
             tg_send_message($chatId, tg_today_summary($pdo, $reviewsFile), null, $messageId);
+            return;
+
+        case 'tomorrow':
+            tg_send_message($chatId, tg_tomorrow_summary($pdo), null, $messageId);
             return;
 
         case 'arrivals':
@@ -2789,6 +3290,14 @@ function tg_handle_message(array $message, PDO $pdo, Database $db, string $revie
 
         case 'departures_today':
             tg_send_departures_bookings($chatId, $pdo, 'today', 'today');
+            return;
+
+        case 'availability':
+            tg_send_room_availability_check($chatId, $pdo, $args);
+            return;
+
+        case 'free_rooms':
+            tg_send_free_rooms_for_range($chatId, $pdo, $args);
             return;
 
         case 'actions':
@@ -2863,43 +3372,126 @@ function tg_handle_message(array $message, PDO $pdo, Database $db, string $revie
     }
 }
 
-if ($method === 'GET') {
-    json_response([
-        'success' => true,
-        'service' => 'telegram-webhook',
-        'configured' => TELEGRAM_BOT_TOKEN !== '',
-        'admin_configured' => tg_admin_list_configured(),
-        'admin_chats' => count(tg_admin_chat_ids()),
-        'webhook_secret_enabled' => TELEGRAM_WEBHOOK_SECRET !== '',
-    ]);
+function tg_process_update_payload(?array $update, PDO $pdo, Database $db, string $reviewsFile, array $allowedTopics, bool $webhookMode = true): array
+{
+    tg_set_webhook_update_type(null);
+    tg_take_direct_response();
+
+    if (!is_array($update)) {
+        return ['success' => true, 'handled' => false, 'reason' => 'empty_payload'];
+    }
+
+    if (isset($update['callback_query']) && is_array($update['callback_query'])) {
+        if ($webhookMode) {
+            tg_set_webhook_update_type('callback_query');
+        }
+        tg_handle_callback_query($update['callback_query'], $pdo, $db, $reviewsFile);
+        $directPayload = $webhookMode ? tg_take_direct_response() : null;
+        tg_set_webhook_update_type(null);
+        return is_array($directPayload)
+            ? $directPayload
+            : ['success' => true, 'handled' => true, 'type' => 'callback_query'];
+    }
+
+    if (isset($update['message']) && is_array($update['message'])) {
+        if ($webhookMode) {
+            tg_set_webhook_update_type('message');
+        }
+        tg_handle_message($update['message'], $pdo, $db, $reviewsFile, $allowedTopics);
+        $directPayload = $webhookMode ? tg_take_direct_response() : null;
+        tg_set_webhook_update_type(null);
+        return is_array($directPayload)
+            ? $directPayload
+            : ['success' => true, 'handled' => true, 'type' => 'message'];
+    }
+
+    return ['success' => true, 'handled' => false, 'reason' => 'unsupported_update'];
 }
 
-if ($method !== 'POST') {
-    error_response('Method not allowed', 405);
-}
+if (!defined('SVH_TG_LIBRARY_ONLY') || SVH_TG_LIBRARY_ONLY !== true) {
+    if ($method === 'GET') {
+        json_response([
+            'success' => true,
+            'service' => 'telegram-webhook',
+            'configured' => TELEGRAM_BOT_TOKEN !== '',
+            'admin_configured' => tg_admin_list_configured(),
+            'admin_chats' => count(tg_admin_chat_ids()),
+            'webhook_secret_enabled' => TELEGRAM_WEBHOOK_SECRET !== '',
+        ]);
+    }
 
-if (TELEGRAM_BOT_TOKEN === '') {
-    error_response('Telegram bot token is not configured', 503);
-}
+    if ($method !== 'POST') {
+        error_response('Method not allowed', 405);
+    }
 
-$headers = tg_request_headers();
-if (!tg_webhook_secret_is_valid($headers)) {
-    error_response('Forbidden', 403);
-}
+    if (TELEGRAM_BOT_TOKEN === '') {
+        error_response('Telegram bot token is not configured', 503);
+    }
 
-$update = tg_read_update_payload();
-if (!is_array($update)) {
-    json_response(['success' => true, 'handled' => false, 'reason' => 'empty_payload']);
-}
+    $headers = tg_request_headers();
+    if (!tg_webhook_secret_is_valid($headers)) {
+        tg_debug_log('telegram webhook forbidden', [
+            'request_id' => tg_debug_request_id(),
+            'remote_addr' => (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+        ]);
+        error_response('Forbidden', 403);
+    }
 
-if (isset($update['callback_query']) && is_array($update['callback_query'])) {
-    tg_handle_callback_query($update['callback_query'], $pdo, $db, $REVIEWS_FILE);
-    json_response(['success' => true, 'handled' => true, 'type' => 'callback_query']);
-}
+    register_shutdown_function(static function (): void {
+        $lastError = error_get_last();
+        if (!is_array($lastError)) {
+            return;
+        }
 
-if (isset($update['message']) && is_array($update['message'])) {
-    tg_handle_message($update['message'], $pdo, $db, $REVIEWS_FILE, $REVIEW_TOPICS);
-    json_response(['success' => true, 'handled' => true, 'type' => 'message']);
-}
+        $fatalTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+        if (!in_array((int) ($lastError['type'] ?? 0), $fatalTypes, true)) {
+            return;
+        }
 
-json_response(['success' => true, 'handled' => false, 'reason' => 'unsupported_update']);
+        tg_debug_log('telegram webhook shutdown fatal', [
+            'request_id' => tg_debug_request_id(),
+            'type' => (int) ($lastError['type'] ?? 0),
+            'message' => (string) ($lastError['message'] ?? ''),
+            'file' => (string) ($lastError['file'] ?? ''),
+            'line' => (int) ($lastError['line'] ?? 0),
+        ]);
+    });
+
+    try {
+        $update = tg_read_update_payload();
+        $summary = ['request_id' => tg_debug_request_id()];
+        if (is_array($update)) {
+            $summary['update_id'] = (int) ($update['update_id'] ?? 0);
+            if (isset($update['message']) && is_array($update['message'])) {
+                $summary['kind'] = 'message';
+                $summary['chat_id'] = (string) (($update['message']['chat']['id'] ?? ''));
+                $summary['text'] = mb_substr(trim((string) ($update['message']['text'] ?? '')), 0, 120);
+            } elseif (isset($update['callback_query']) && is_array($update['callback_query'])) {
+                $summary['kind'] = 'callback_query';
+                $summary['chat_id'] = (string) (($update['callback_query']['message']['chat']['id'] ?? ''));
+                $summary['data'] = mb_substr(trim((string) ($update['callback_query']['data'] ?? '')), 0, 120);
+            } else {
+                $summary['kind'] = 'unsupported';
+            }
+        } else {
+            $summary['kind'] = 'empty';
+        }
+        tg_debug_log('telegram webhook request', $summary);
+
+        $response = tg_process_update_payload($update, $pdo, $db, $REVIEWS_FILE, $REVIEW_TOPICS, true);
+        tg_debug_log('telegram webhook response', [
+            'request_id' => tg_debug_request_id(),
+            'response_keys' => array_keys($response),
+        ]);
+        json_response($response);
+    } catch (Throwable $e) {
+        error_log('Telegram webhook fatal: ' . $e->getMessage());
+        tg_debug_log('telegram webhook exception', [
+            'request_id' => tg_debug_request_id(),
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+        error_response('Webhook processing failed', 503);
+    }
+}

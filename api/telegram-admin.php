@@ -50,6 +50,8 @@ foreach ($stateFiles as $filePath) {
 
 $webhookRefreshed = false;
 $commandsUpdated = false;
+$menuButtonUpdated = false;
+$descriptionsUpdated = false;
 $telegramAvailable = trim((string) TELEGRAM_BOT_TOKEN) !== '' && trim((string) TELEGRAM_WEBHOOK_URL) !== '';
 
 if ($telegramAvailable) {
@@ -69,30 +71,45 @@ if ($telegramAvailable) {
     $webhookRefreshed = is_array($setWebhookResult) && (($setWebhookResult['ok'] ?? false) === true);
 
     $commands = [
-        ['command' => 'menu', 'description' => 'Показати кнопки меню'],
-        ['command' => 'help', 'description' => 'Список команд'],
-        ['command' => 'status', 'description' => 'Статус сайту'],
-        ['command' => 'today', 'description' => 'Звіт за сьогодні'],
-        ['command' => 'pending', 'description' => 'Pending відгуки'],
-        ['command' => 'approve', 'description' => 'Схвалити відгук: /approve ID'],
-        ['command' => 'reject', 'description' => 'Відхилити відгук: /reject ID'],
-        ['command' => 'add_review', 'description' => 'Додати відгук'],
-        ['command' => 'bookings', 'description' => 'Нові заявки'],
-        ['command' => 'latest', 'description' => 'Остання заявка'],
-        ['command' => 'booking', 'description' => 'Деталі заявки'],
-        ['command' => 'find', 'description' => 'Пошук заявки'],
-        ['command' => 'reply', 'description' => 'Відповідь на заявку'],
+        ['command' => 'menu', 'description' => 'Головне меню з кнопками'],
+        ['command' => 'app', 'description' => 'Відкрити Telegram App заявок'],
+        ['command' => 'bookings', 'description' => 'Останні заявки'],
+        ['command' => 'latest', 'description' => 'Відкрити останню заявку'],
+        ['command' => 'pending', 'description' => 'Відгуки на модерації'],
+        ['command' => 'reply', 'description' => 'Відповісти гостю по заявці'],
         ['command' => 'change_room', 'description' => 'Змінити номер у заявці'],
-        ['command' => 'arrivals', 'description' => 'Заїзди: today|tomorrow'],
-        ['command' => 'departures', 'description' => 'Виїзди: today'],
-        ['command' => 'actions', 'description' => 'Останні дії адмінки'],
+        ['command' => 'today', 'description' => 'Підсумок на сьогодні'],
+        ['command' => 'tomorrow', 'description' => 'Підсумок на завтра'],
+        ['command' => 'free_rooms', 'description' => 'Вільні номери на дати'],
+        ['command' => 'find', 'description' => 'Пошук заявки'],
+        ['command' => 'status', 'description' => 'Стан бота і сайту'],
+        ['command' => 'help', 'description' => 'Повна довідка'],
         ['command' => 'login', 'description' => 'Вхід з нового пристрою'],
-        ['command' => 'logout', 'description' => 'Вийти з поточного пристрою'],
+        ['command' => 'logout', 'description' => 'Вийти з цього пристрою'],
     ];
     $setCommandsResult = telegram_api_request('setMyCommands', [
         'commands' => json_encode($commands, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
     ]);
     $commandsUpdated = is_array($setCommandsResult) && (($setCommandsResult['ok'] ?? false) === true);
+
+    $setMenuButtonResult = telegram_api_request('setChatMenuButton', [
+        'menu_button' => json_encode([
+            'type' => 'web_app',
+            'text' => 'Заявки',
+            'web_app' => ['url' => TELEGRAM_MINIAPP_URL],
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+    ]);
+    $menuButtonUpdated = is_array($setMenuButtonResult) && (($setMenuButtonResult['ok'] ?? false) === true);
+
+    $setShortDescriptionResult = telegram_api_request('setMyShortDescription', [
+        'short_description' => 'Заявки SvityazHOME в Telegram App',
+    ]);
+    $setDescriptionResult = telegram_api_request('setMyDescription', [
+        'description' => 'SvityazHOME: Telegram App для заявок, деталей бронювання, пошуку і швидких дій.',
+    ]);
+    $descriptionsUpdated =
+        is_array($setShortDescriptionResult) && (($setShortDescriptionResult['ok'] ?? false) === true) &&
+        is_array($setDescriptionResult) && (($setDescriptionResult['ok'] ?? false) === true);
 }
 
 $details = implode('; ', [
@@ -100,6 +117,8 @@ $details = implode('; ', [
     'failed=' . (string) count($failed),
     'webhook=' . ($webhookRefreshed ? '1' : '0'),
     'commands=' . ($commandsUpdated ? '1' : '0'),
+    'menu_button=' . ($menuButtonUpdated ? '1' : '0'),
+    'descriptions=' . ($descriptionsUpdated ? '1' : '0'),
 ]);
 $db->logAdminAction('telegram_bot_reset', $details, $ip);
 
@@ -111,5 +130,7 @@ json_response([
     'failed_files' => $failed,
     'webhook_refreshed' => $webhookRefreshed,
     'commands_updated' => $commandsUpdated,
+    'menu_button_updated' => $menuButtonUpdated,
+    'descriptions_updated' => $descriptionsUpdated,
     'telegram_available' => $telegramAvailable,
 ]);

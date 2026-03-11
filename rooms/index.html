@@ -48,13 +48,11 @@
 
     <!-- Preload критичних ресурсів -->
     <link rel="preload" href="/storage/uploads/rooms/room-1/room-1-bedroom-metal-bed-wooden-walls.webp" as="image">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400..700&display=swap"
-      rel="stylesheet">
+    <link rel="preload" href="/assets/css/critical.css" as="style">
+    <link rel="stylesheet" href="/assets/css/critical.css">
+    <link rel="preload" href="/assets/css/styles.min.css" as="style">
     <link rel="stylesheet" href="/assets/css/styles.min.css">
+    <link rel="stylesheet" href="/assets/css/site-polish.css">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
 
@@ -432,9 +430,10 @@
       <!-- Фільтри -->
       <section class="rooms-filters">
         <div class="container">
-          <div class="rooms-filters__wrapper">
+          <h2 class="sr-only" id="roomsFiltersLabel">Фільтри номерів</h2>
+          <div class="rooms-filters__wrapper" role="group" aria-labelledby="roomsFiltersLabel">
             <div class="rooms-filters__group">
-              <label class="rooms-filters__label">
+              <label class="rooms-filters__label" for="filterCapacity">
                 <svg class="rooms-filters__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="9" cy="7" r="4"></circle>
@@ -443,7 +442,7 @@
                 </svg>
                 <span>Гостей</span>
               </label>
-              <select class="rooms-filters__select" id="filterCapacity">
+              <select class="rooms-filters__select" id="filterCapacity" name="capacity" aria-label="Кількість гостей" aria-controls="rooms-grid roomsStats">
                 <option value="all" selected>Будь-яка кількість</option>
                 <option value="2" data-count="4">2 гості</option>
                 <option value="3" data-count="4">3 гості</option>
@@ -455,13 +454,13 @@
             </div>
             <div class="rooms-filters__divider"></div>
             <div class="rooms-filters__group">
-              <label class="rooms-filters__label">
+              <label class="rooms-filters__label" for="filterType">
                 <svg class="rooms-filters__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M3 3h18v18H3zM21 9H3M9 21V9"></path>
                 </svg>
                 <span>Категорія</span>
               </label>
-              <select class="rooms-filters__select" id="filterType">
+              <select class="rooms-filters__select" id="filterType" name="type" aria-label="Категорія номера" aria-controls="rooms-grid roomsStats">
                 <option value="all" selected>Усі категорії</option>
                 <option value="lux" data-count="9">✨ Люкс</option>
                 <option value="standard" data-count="6">🏠 Стандарт</option>
@@ -470,7 +469,7 @@
                 <option value="future" data-count="2">🔧 У підготовці</option>
               </select>
             </div>
-            <button class="rooms-filters__reset" id="resetFilters" title="Скинути фільтри">
+            <button class="rooms-filters__reset" id="resetFilters" title="Скинути фільтри" type="button" aria-label="Скинути обрані фільтри">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                 <path d="M3 3v5h5"></path>
@@ -478,11 +477,11 @@
               <span>Скинути</span>
             </button>
           </div>
-          <div class="rooms-filters__chips" aria-label="Швидкі фільтри">
+          <div class="rooms-filters__chips" aria-label="Швидкі фільтри" role="group">
             <div class="rooms-filter-chip-group" id="capacityChips" aria-label="Фільтр за кількістю гостей"></div>
             <div class="rooms-filter-chip-group" id="typeChips" aria-label="Фільтр за категорією"></div>
           </div>
-          <div class="rooms-filters__stats" id="roomsStats">
+          <div class="rooms-filters__stats" id="roomsStats" aria-live="polite">
             <span class="rooms-filters__count">
               Знайдено: <strong id="roomsCount">20</strong> номерів
             </span>

@@ -4,7 +4,7 @@
  * Secure JSON-based reviews/questions endpoint.
  */
 
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 if (send_api_headers(['GET', 'POST', 'OPTIONS'])) {
     exit;
@@ -24,82 +24,24 @@ const REVIEW_ROOM_MAX_ID = 20;
 
 function default_reviews_payload(): array
 {
-    return [
-        'topics' => [
-            'rooms' => 'Номери',
-            'territory' => 'Територія',
-            'service' => 'Обслуговування',
-            'location' => 'Локація',
-            'general' => 'Загальні враження',
-        ],
-        'approved' => [],
-        'pending' => [],
-        'questions' => [],
-        'nextId' => 100,
-    ];
+    return svh_reviews_defaults();
 }
 
 function ensure_reviews_shape(array $data): array
 {
-    $defaults = default_reviews_payload();
-    $data = array_merge($defaults, $data);
-
-    foreach (['approved', 'pending', 'questions'] as $key) {
-        if (!isset($data[$key]) || !is_array($data[$key])) {
-            $data[$key] = [];
-        }
-    }
-
-    if (!isset($data['nextId']) || !is_numeric($data['nextId'])) {
-        $maxId = 0;
-        foreach (array_merge($data['approved'], $data['pending'], $data['questions']) as $item) {
-            $id = (int) ($item['id'] ?? 0);
-            if ($id > $maxId) {
-                $maxId = $id;
-            }
-        }
-        $data['nextId'] = $maxId + 1;
-    } else {
-        $data['nextId'] = (int) $data['nextId'];
-    }
-
-    return $data;
+    return svh_normalize_reviews_payload($data);
 }
 
 function read_reviews_data(string $filePath): array
 {
-    if (!file_exists($filePath)) {
-        return default_reviews_payload();
-    }
-
-    $raw = file_get_contents($filePath);
-    if ($raw === false) {
-        return default_reviews_payload();
-    }
-
-    $decoded = json_decode($raw, true);
-    if (!is_array($decoded)) {
-        return default_reviews_payload();
-    }
-
-    return ensure_reviews_shape($decoded);
+    return svh_read_reviews_storage($filePath);
 }
 
 function save_reviews_data(string $filePath, array $data): void
 {
     maybe_auto_storage_backup('reviews-write', 6 * 3600);
 
-    $dir = dirname($filePath);
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
-
-    $json = json_encode(ensure_reviews_shape($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    if ($json === false) {
-        error_response('Failed to serialize data', 500);
-    }
-
-    if (file_put_contents($filePath, $json, LOCK_EX) === false) {
+    if (!svh_write_reviews_storage($data, $filePath)) {
         error_response('Failed to save data', 500);
     }
 }
@@ -208,19 +150,17 @@ function issue_cache_headers(string $seed): void
 }
 
 if ($method === 'GET') {
-    $action = strtolower(trim((string) ($_GET['action'] ?? '')));
+    $action = strtolower(svh_query_string('action', 40, ''));
 
     if ($action === 'csrf') {
-        json_response([
-            'success' => true,
+        svh_respond_legacy_success([
             'csrf_token' => get_csrf_token(),
-        ]);
+        ], 'CSRF token issued');
     }
 
     if ($action === 'admin_account') {
         require_admin_auth($db, $_GET);
-        json_response([
-            'success' => true,
+        svh_respond_legacy_success([
             'email' => get_admin_login_email(),
         ]);
     }
@@ -234,8 +174,7 @@ if ($method === 'GET') {
         $pending = sort_items_by_created_desc($data['pending']);
         $questions = sort_items_by_created_desc($data['questions']);
 
-        json_response([
-            'success' => true,
+        svh_respond_legacy_success([
             'approved' => $approved,
             'pending' => $pending,
             'questions' => $questions,
@@ -249,20 +188,14 @@ if ($method === 'GET') {
         ]);
     }
 
-    $topic = sanitize_topic($_GET['topic'] ?? 'all', array_merge($REVIEW_TOPICS, ['all']), 'all');
-    $sort = strtolower(trim((string) ($_GET['sort'] ?? 'latest')));
+    $topic = sanitize_topic(svh_query_string('topic', 40, 'all'), array_merge($REVIEW_TOPICS, ['all']), 'all');
+    $sort = strtolower(svh_query_string('sort', 20, 'latest'));
     if (!in_array($sort, $SORT_OPTIONS, true)) {
         $sort = 'latest';
     }
 
-    $page = max(1, (int) ($_GET['page'] ?? 1));
-    $perPage = (int) ($_GET['per_page'] ?? 12);
-    if ($perPage < 1) {
-        $perPage = 12;
-    }
-    if ($perPage > 60) {
-        $perPage = 60;
-    }
+    $page = svh_query_int('page', 1, 1);
+    $perPage = svh_query_int('per_page', 12, 1, 60);
 
     $filtered = filter_and_sort_reviews($data['approved'], $topic, $sort);
     $paged = paginate_items($filtered, $page, $perPage);
@@ -286,8 +219,7 @@ if ($method === 'GET') {
     ]);
     issue_cache_headers($cacheSeed);
 
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'reviews' => $paged['items'],
         'total' => $total,
         'average_rating' => $average,
@@ -304,7 +236,7 @@ if ($method !== 'POST') {
 
 $input = read_input_payload();
 $action = strtolower(trim((string) ($input['action'] ?? 'submit')));
-$userAgent = sanitize_text_field($_SERVER['HTTP_USER_AGENT'] ?? '', 255);
+$userAgent = svh_request_user_agent(255);
 $data = read_reviews_data($REVIEWS_FILE);
 
 if ($action === 'auth_check') {
@@ -314,19 +246,17 @@ if ($action === 'auth_check') {
         error_response('Admin login is not configured', 503);
     }
 
-    if (!is_admin_login_password_valid($input)) {
+    $email = svh_input_string($input, 'email', 120, get_admin_login_email());
+    $password = (string) ($input['password'] ?? '');
+
+    $issued = svh_issue_admin_session($db, $email, $password, $ip, $userAgent);
+    if (!is_array($issued)) {
         error_response('Invalid credentials', 401);
     }
 
-    $token = $db->createAdminSession($ip, $userAgent);
     $db->logAdminAction('auth_login', 'reviews_api', $ip);
 
-    json_response([
-        'success' => true,
-        'token' => $token,
-        'email' => get_admin_login_email(),
-        'expires_in' => SESSION_LIFETIME,
-    ]);
+    svh_respond_legacy_success($issued, 'Admin session created');
 }
 
 if ($action === 'submit') {
@@ -410,10 +340,9 @@ if ($action === 'submit') {
         ]));
     }
 
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'message' => 'Дякуємо! Відгук буде опубліковано після перевірки.',
-    ]);
+    ], 'Дякуємо! Відгук буде опубліковано після перевірки.');
 }
 
 if ($action === 'question') {
@@ -461,10 +390,9 @@ if ($action === 'question') {
         ]));
     }
 
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'message' => "Дякуємо! Ми зв'яжемося з вами найближчим часом.",
-    ]);
+    ], "Дякуємо! Ми зв'яжемося з вами найближчим часом.");
 }
 
 require_admin_auth($db, $input);
@@ -514,11 +442,10 @@ if ($action === 'change_password') {
     }
 
     $db->logAdminAction('auth_password_change', 'reviews_api', $ip);
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'email' => get_admin_login_email(),
         'message' => 'Пароль адміністратора змінено',
-    ]);
+    ], 'Пароль адміністратора змінено');
 }
 
 $id = (int) ($input['id'] ?? 0);
@@ -531,7 +458,7 @@ if ($action === 'approve' && $id > 0) {
             $data['approved'][] = $item;
             save_reviews_data($REVIEWS_FILE, $data);
             $db->logAdminAction('review_approve', 'id=' . $id, $ip);
-            json_response(['success' => true, 'message' => 'Схвалено']);
+            svh_respond_legacy_success(['message' => 'Схвалено'], 'Схвалено');
         }
     }
     error_response('Відгук не знайдено', 404);
@@ -556,7 +483,7 @@ if (($action === 'reject' || $action === 'delete') && $id > 0) {
 
     save_reviews_data($REVIEWS_FILE, $data);
     $db->logAdminAction('review_delete', 'id=' . $id, $ip);
-    json_response(['success' => true, 'message' => 'Видалено']);
+    svh_respond_legacy_success(['message' => 'Видалено'], 'Видалено');
 }
 
 if ($action === 'add_review') {
@@ -622,7 +549,7 @@ if ($action === 'add_review') {
     $data['approved'][] = $review;
     save_reviews_data($REVIEWS_FILE, $data);
     $db->logAdminAction('review_add', 'id=' . $review['id'], $ip);
-    json_response(['success' => true, 'message' => 'Додано']);
+    svh_respond_legacy_success(['message' => 'Додано'], 'Додано');
 }
 
 error_response('Unknown action', 400);

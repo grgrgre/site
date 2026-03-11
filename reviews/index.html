@@ -44,14 +44,11 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2d7a8c">
     <link rel="apple-touch-icon" href="/assets/images/favicon/apple-touch-icon.png">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400..700&display=swap"
-      rel="stylesheet">
+    <link rel="preload" href="/assets/css/critical.css" as="style">
+    <link rel="stylesheet" href="/assets/css/critical.css">
     <link rel="preload" href="/assets/css/styles.min.css" as="style">
     <link rel="stylesheet" href="/assets/css/styles.min.css">
+    <link rel="stylesheet" href="/assets/css/site-polish.css">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
     <style>
@@ -264,23 +261,23 @@
       <!-- Фільтри по темах -->
       <section class="section reviews-filters-section">
         <div class="container">
-          <div class="reviews-filters" id="topic-filters">
-            <button class="filter-btn active" data-topic="all">
+          <div class="reviews-filters" id="topic-filters" role="group" aria-label="Фільтр відгуків за темами">
+            <button type="button" class="filter-btn active" data-topic="all" aria-pressed="true">
               Усі відгуки
             </button>
-            <button class="filter-btn" data-topic="rooms">
+            <button type="button" class="filter-btn" data-topic="rooms" aria-pressed="false">
               Номери
             </button>
-            <button class="filter-btn" data-topic="territory">
+            <button type="button" class="filter-btn" data-topic="territory" aria-pressed="false">
               Територія
             </button>
-            <button class="filter-btn" data-topic="service">
+            <button type="button" class="filter-btn" data-topic="service" aria-pressed="false">
               Обслуговування
             </button>
-            <button class="filter-btn" data-topic="location">
+            <button type="button" class="filter-btn" data-topic="location" aria-pressed="false">
               Локація
             </button>
-            <button class="filter-btn" data-topic="general">
+            <button type="button" class="filter-btn" data-topic="general" aria-pressed="false">
               Загальні враження
             </button>
           </div>
@@ -343,7 +340,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label>Тема відгуку *</label>
+                  <label for="review-topic">Тема відгуку *</label>
                   <select id="review-topic" name="topic" required>
                     <option value="">Оберіть тему...</option>
                     <option value="rooms">🛏️ Номери</option>
@@ -363,13 +360,13 @@
                 </div>
 
                 <div class="form-group">
-                  <label>Оцінка *</label>
-                  <div class="star-rating" id="star-rating">
-                    <span class="star" data-rating="1">☆</span>
-                    <span class="star" data-rating="2">☆</span>
-                    <span class="star" data-rating="3">☆</span>
-                    <span class="star" data-rating="4">☆</span>
-                    <span class="star" data-rating="5">☆</span>
+                  <label id="review-rating-label">Оцінка *</label>
+                  <div class="star-rating" id="star-rating" role="radiogroup" aria-labelledby="review-rating-label">
+                    <span class="star" data-rating="1" role="radio" tabindex="-1" aria-checked="false" aria-label="1 з 5">☆</span>
+                    <span class="star" data-rating="2" role="radio" tabindex="-1" aria-checked="false" aria-label="2 з 5">☆</span>
+                    <span class="star" data-rating="3" role="radio" tabindex="-1" aria-checked="false" aria-label="3 з 5">☆</span>
+                    <span class="star" data-rating="4" role="radio" tabindex="-1" aria-checked="false" aria-label="4 з 5">☆</span>
+                    <span class="star" data-rating="5" role="radio" tabindex="0" aria-checked="true" aria-label="5 з 5">☆</span>
                   </div>
                   <input type="hidden" id="review-rating" name="rating" value="5">
                 </div>
@@ -431,7 +428,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label>Тема запитання</label>
+                  <label for="question-topic">Тема запитання</label>
                   <select id="question-topic" name="topic">
                     <option value="booking">📅 Бронювання</option>
                     <option value="rooms">🛏️ Номери</option>

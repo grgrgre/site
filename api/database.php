@@ -146,6 +146,21 @@ class Database {
             )
         ");
 
+        // Manual calendar blocks / maintenance windows.
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS calendar_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                room_code TEXT NOT NULL,
+                start_date TEXT NOT NULL,
+                end_date TEXT NOT NULL,
+                event_type TEXT NOT NULL DEFAULT 'manual_block',
+                title TEXT NOT NULL DEFAULT '',
+                note TEXT,
+                status TEXT NOT NULL DEFAULT 'active',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+
         // AI chat runtime settings (single-row config).
         $this->pdo->exec("
             CREATE TABLE IF NOT EXISTS ai_settings (
@@ -185,6 +200,10 @@ class Database {
         $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_admin_sessions_token ON admin_sessions(token)");
         $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_bookings_booking_id ON bookings(booking_id)");
         $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at)");
+        $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_bookings_room_dates ON bookings(room_code, checkin_date, checkout_date)");
+        $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status)");
+        $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_calendar_events_room_dates ON calendar_events(room_code, start_date, end_date)");
+        $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_calendar_events_status ON calendar_events(status, event_type)");
         $this->pdo->exec("CREATE INDEX IF NOT EXISTS idx_ai_prompt_versions_created_at ON ai_prompt_versions(created_at)");
 
         $this->ensureAiSettingsRow();

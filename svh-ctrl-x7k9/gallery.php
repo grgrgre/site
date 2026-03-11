@@ -6,58 +6,7 @@ admin_require_login();
 
 function admin_gallery_upload(array $file): ?string
 {
-    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
-        return null;
-    }
-
-    if (($file['size'] ?? 0) <= 0 || ($file['size'] ?? 0) > MAX_UPLOAD_SIZE) {
-        return null;
-    }
-
-    $tmp = (string) ($file['tmp_name'] ?? '');
-    if ($tmp === '' || !is_uploaded_file($tmp)) {
-        return null;
-    }
-
-    $mime = '';
-    if (function_exists('finfo_open')) {
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = $finfo ? (string) finfo_file($finfo, $tmp) : '';
-        if ($finfo) {
-            finfo_close($finfo);
-        }
-    } elseif (function_exists('mime_content_type')) {
-        $mime = (string) mime_content_type($tmp);
-    }
-
-    $extMap = [
-        'image/jpeg' => 'jpg',
-        'image/png' => 'png',
-        'image/webp' => 'webp',
-    ];
-
-    if (!isset($extMap[$mime])) {
-        return null;
-    }
-
-    $baseName = preg_replace('/[^a-z0-9-]+/i', '-', pathinfo((string) ($file['name'] ?? 'gallery'), PATHINFO_FILENAME)) ?: 'gallery';
-    $baseName = trim((string) $baseName, '-');
-    if ($baseName === '') {
-        $baseName = 'gallery';
-    }
-
-    $targetName = $baseName . '-' . date('Ymd-His') . '.' . $extMap[$mime];
-    $targetDir = UPLOADS_DIR . 'site/';
-    if (!is_dir($targetDir) && !mkdir($targetDir, 0755, true) && !is_dir($targetDir)) {
-        return null;
-    }
-
-    $targetPath = $targetDir . $targetName;
-    if (!move_uploaded_file($tmp, $targetPath)) {
-        return null;
-    }
-
-    return '/storage/uploads/site/' . $targetName;
+    return svh_process_gallery_upload($file);
 }
 
 $content = svh_read_site_content();

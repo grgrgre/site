@@ -12,7 +12,7 @@ $roomFiles = glob(DATA_DIR . 'rooms/room-*.json') ?: [];
 
 $pendingBookings = 0;
 foreach ($bookings as $booking) {
-    if (in_array((string) ($booking['status'] ?? ''), ['new', 'new_email_failed'], true)) {
+    if (in_array((string) ($booking['status'] ?? ''), ['new', 'new_email_failed', 'waiting'], true)) {
         $pendingBookings++;
     }
 }
@@ -54,7 +54,7 @@ admin_render_header('Огляд', 'index.php');
     <article class="admin-kpi">
       <p class="admin-kpi__label">Нові заявки</p>
       <p class="admin-kpi__value"><?= $pendingBookings ?></p>
-      <p class="admin-hint">Заявки зі статусом `new` або `new_email_failed`.</p>
+      <p class="admin-hint">Заявки зі статусом `new`, `waiting` або `new_email_failed`.</p>
     </article>
     <article class="admin-kpi">
       <p class="admin-kpi__label">Модерація відгуків</p>
@@ -89,6 +89,10 @@ admin_render_header('Огляд', 'index.php');
       <a class="admin-card-link" href="<?= admin_e(admin_url('rooms.php')) ?>">
         <span class="admin-card-link__title">Номери</span>
         <span class="admin-card-link__text">Змінити місткість, ціну, описи, правила та зображення номерів.</span>
+      </a>
+      <a class="admin-card-link" href="<?= admin_e(admin_url('calendar.php')) ?>">
+        <span class="admin-card-link__title">Календар</span>
+        <span class="admin-card-link__text">Подивитись зайнятість номерів по датах і поставити ручний блок.</span>
       </a>
       <a class="admin-card-link" href="<?= admin_e(admin_url('requests.php')) ?>">
         <span class="admin-card-link__title">Запити</span>

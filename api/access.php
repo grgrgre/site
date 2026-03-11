@@ -4,7 +4,7 @@
  * Provides password check for preview access modal shown in the site UI.
  */
 
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 if (send_api_headers(['GET', 'POST', 'OPTIONS'])) {
     exit;
@@ -28,8 +28,7 @@ function is_early_access_unlocked_now(): bool
 
 function respond_early_access_status(): void
 {
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'enabled' => SITE_EARLY_ACCESS_ENABLED,
         'unlocked' => (!SITE_EARLY_ACCESS_ENABLED || is_early_access_unlocked_now()),
         'expires_in' => SITE_EARLY_ACCESS_TTL,
@@ -75,22 +74,20 @@ if ($action === 'unlock') {
     $_SESSION['early_access_expires_at'] = $expiresAt;
     $_SESSION['early_access_granted_at'] = time();
 
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'enabled' => true,
         'unlocked' => true,
         'expires_in' => SITE_EARLY_ACCESS_TTL,
         'expires_at' => gmdate('c', $expiresAt),
-    ]);
+    ], 'Access granted');
 }
 
 if ($action === 'logout') {
     unset($_SESSION['early_access_expires_at'], $_SESSION['early_access_granted_at']);
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'enabled' => SITE_EARLY_ACCESS_ENABLED,
         'unlocked' => false,
-    ]);
+    ], 'Access revoked');
 }
 
 error_response('Unknown action', 400);

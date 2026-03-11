@@ -1,0 +1,158 @@
+/* Critical layer: first paint tokens + core layout */
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: local("Manrope"), url("/assets/fonts/manrope-v20-cyrillic-wght400-700.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: local("Manrope"), url("/assets/fonts/manrope-v20-latin-wght400-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: local("Fraunces"), url("/assets/fonts/fraunces-v38-latin-wght600-700.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --space-section: clamp(2.8rem, 5vw, 5rem);
+  --space-section-tight: clamp(2rem, 4vw, 3.3rem);
+  --font-step-base: clamp(1rem, 0.96rem + 0.18vw, 1.06rem);
+  --font-step-h1: clamp(2.1rem, 5.8vw, 4rem);
+  --font-step-h2: clamp(1.65rem, 3.9vw, 2.6rem);
+  --font-step-h3: clamp(1.2rem, 2.3vw, 1.55rem);
+  --critical-bg: #f7f3eb;
+  --critical-surface: rgba(255, 255, 255, 0.94);
+  --critical-text: #1c2b25;
+  --critical-muted: #3d4f48;
+  --critical-accent: #2a6b52;
+  --critical-accent-2: #3f8d6a;
+  --critical-focus: #c07a00;
+  --critical-focus-soft: rgba(192, 122, 0, 0.26);
+}
+
+:root[data-theme="dark"] {
+  --critical-bg: #10211c;
+  --critical-surface: rgba(22, 38, 34, 0.9);
+  --critical-text: #eaf4f0;
+  --critical-muted: #bdd0c8;
+  --critical-accent: #7fc5a0;
+  --critical-accent-2: #95d6b4;
+  --critical-focus: #ffd166;
+  --critical-focus-soft: rgba(255, 209, 102, 0.26);
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  font-size: var(--font-step-base);
+  background: var(--critical-bg);
+  color: var(--critical-text);
+}
+
+main > .section {
+  padding-block: var(--space-section);
+}
+
+main > .section.quick-facts {
+  padding-block: var(--space-section-tight);
+}
+
+.section-head h1,
+.section-head h2 {
+  margin-bottom: clamp(0.75rem, 1.4vw, 1.15rem);
+  font-size: var(--font-step-h2);
+  text-wrap: balance;
+  color: var(--critical-text);
+}
+
+.section-head p {
+  margin: 0;
+  color: var(--critical-muted);
+}
+
+.hero-premium {
+  padding: clamp(6.1rem, 12vw, 8.5rem) 0 clamp(4.1rem, 8vw, 6rem);
+}
+
+.hero-premium__title {
+  margin-bottom: clamp(1rem, 2.2vw, 1.6rem);
+  font-size: var(--font-step-h1);
+  text-wrap: balance;
+}
+
+.hero-premium__subtitle {
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+.site-header {
+  z-index: 30;
+}
+
+.nav-bar {
+  background: var(--critical-surface);
+  backdrop-filter: blur(8px);
+}
+
+.btn {
+  min-height: 46px;
+  padding: 0.72rem 1.3rem;
+  font-size: clamp(0.94rem, 0.88rem + 0.2vw, 1rem);
+}
+
+.btn-lg {
+  min-height: 54px;
+  padding-inline: clamp(1.15rem, 2.9vw, 1.9rem);
+  font-size: clamp(1rem, 0.93rem + 0.25vw, 1.07rem);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--critical-accent), var(--critical-accent-2));
+  color: #fff;
+  box-shadow: 0 16px 28px -18px rgba(28, 61, 46, 0.72);
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--critical-focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px var(--critical-focus-soft);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --space-section: clamp(2.35rem, 8vw, 3.35rem);
+    --space-section-tight: clamp(1.8rem, 6vw, 2.6rem);
+    --font-step-h1: clamp(1.95rem, 8.2vw, 2.9rem);
+    --font-step-h2: clamp(1.45rem, 5.9vw, 2.05rem);
+    --font-step-h3: clamp(1.05rem, 4.4vw, 1.35rem);
+  }
+
+  .nav-toggle {
+    min-height: 46px;
+    border-radius: 14px;
+  }
+
+  .hero-premium__actions {
+    gap: 0.75rem;
+  }
+
+  .hero-premium__actions .btn {
+    width: min(100%, 22rem);
+  }
+}

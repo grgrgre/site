@@ -92,6 +92,26 @@ if (!function_exists('svh_env_bootstrap')) {
     }
 }
 
+if (!function_exists('svh_env')) {
+    function svh_env(string $name, $default = '')
+    {
+        $value = getenv($name);
+        if ($value !== false) {
+            return $value;
+        }
+
+        if (array_key_exists($name, $_ENV)) {
+            return $_ENV[$name];
+        }
+
+        if (array_key_exists($name, $_SERVER)) {
+            return $_SERVER[$name];
+        }
+
+        return $default;
+    }
+}
+
 $projectRoot = dirname(__DIR__);
 svh_env_bootstrap([
     $projectRoot . '/.env',
@@ -135,13 +155,13 @@ define('ALLOWED_ORIGINS', [
 
 // Пароль адміна: only from env, no insecure fallback.
 // Known leaked default is explicitly rejected.
-$adminPassword = trim((string) (getenv('ADMIN_PASSWORD') ?: ''));
+$adminPassword = trim((string) (svh_env('ADMIN_PASSWORD', '')));
 if ($adminPassword === 'svityaz2026') {
     $adminPassword = '';
 }
 define('ADMIN_PASSWORD', $adminPassword);
 
-$adminEmail = trim((string) (getenv('ADMIN_EMAIL') ?: 'Admin@svityazhome.com.ua'));
+$adminEmail = trim((string) (svh_env('ADMIN_EMAIL', 'Admin@svityazhome.com.ua')));
 if (!filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
     $adminEmail = 'Admin@svityazhome.com.ua';
 }
@@ -169,16 +189,16 @@ define('SESSION_LIFETIME', 86400); // 24 hours
 define('CSRF_TOKEN_TTL', 7200); // 2 hours
 
 // AI chat limits (per-IP + global budgets).
-$chatRate5Min = max(5, (int) (getenv('RATE_LIMIT_CHAT_5MIN') ?: 60));
-$chatRateHourly = max($chatRate5Min, (int) (getenv('RATE_LIMIT_CHAT_HOURLY') ?: 240));
-$chatRateDailyGlobal = max($chatRateHourly, (int) (getenv('RATE_LIMIT_CHAT_DAILY_GLOBAL') ?: 1500));
-$chatMonthWindowDays = max(28, min(31, (int) (getenv('RATE_LIMIT_CHAT_MONTH_WINDOW_DAYS') ?: 30)));
-$chatRateMonthlyGlobal = max($chatRateDailyGlobal, (int) (getenv('RATE_LIMIT_CHAT_MONTHLY_GLOBAL') ?: 30000));
-$chatMaxTokensDefault = max(64, (int) (getenv('OPENAI_CHAT_MAX_TOKENS_DEFAULT') ?: 900));
-$chatMaxTokensHard = max($chatMaxTokensDefault, (int) (getenv('OPENAI_CHAT_MAX_TOKENS_HARD') ?: 1400));
-$editorMaxTokensDefault = max(512, (int) (getenv('OPENAI_EDITOR_MAX_TOKENS_DEFAULT') ?: 2600));
-$editorMaxTokensHard = max($editorMaxTokensDefault, (int) (getenv('OPENAI_EDITOR_MAX_TOKENS_HARD') ?: 5200));
-$openAiImageModel = trim((string) (getenv('OPENAI_IMAGE_MODEL') ?: 'gpt-image-1'));
+$chatRate5Min = max(5, (int) (svh_env('RATE_LIMIT_CHAT_5MIN', 60)));
+$chatRateHourly = max($chatRate5Min, (int) (svh_env('RATE_LIMIT_CHAT_HOURLY', 240)));
+$chatRateDailyGlobal = max($chatRateHourly, (int) (svh_env('RATE_LIMIT_CHAT_DAILY_GLOBAL', 1500)));
+$chatMonthWindowDays = max(28, min(31, (int) (svh_env('RATE_LIMIT_CHAT_MONTH_WINDOW_DAYS', 30))));
+$chatRateMonthlyGlobal = max($chatRateDailyGlobal, (int) (svh_env('RATE_LIMIT_CHAT_MONTHLY_GLOBAL', 30000)));
+$chatMaxTokensDefault = max(64, (int) (svh_env('OPENAI_CHAT_MAX_TOKENS_DEFAULT', 900)));
+$chatMaxTokensHard = max($chatMaxTokensDefault, (int) (svh_env('OPENAI_CHAT_MAX_TOKENS_HARD', 1400)));
+$editorMaxTokensDefault = max(512, (int) (svh_env('OPENAI_EDITOR_MAX_TOKENS_DEFAULT', 2600)));
+$editorMaxTokensHard = max($editorMaxTokensDefault, (int) (svh_env('OPENAI_EDITOR_MAX_TOKENS_HARD', 5200)));
+$openAiImageModel = trim((string) (svh_env('OPENAI_IMAGE_MODEL', 'gpt-image-1')));
 if ($openAiImageModel === '') {
     $openAiImageModel = 'gpt-image-1';
 }
@@ -206,33 +226,35 @@ define('RATE_LIMIT_BOOKING_HOURLY', 20);   // per IP, per 1 hour
 define('RATE_LIMIT_BOOKING_BURST', 8);     // per IP, per 10 minutes
 
 // Booking email delivery
-define('BOOKING_EMAIL_TO', getenv('BOOKING_EMAIL_TO') ?: 'booking@svityazhome.com.ua');
-define('BOOKING_EMAIL_MODE', strtolower(trim((string) (getenv('BOOKING_EMAIL_MODE') ?: 'auto'))));
-define('SMTP_HOST', getenv('SMTP_HOST') ?: '');
-define('SMTP_USER', getenv('SMTP_USER') ?: '');
-define('SMTP_PASS', getenv('SMTP_PASS') ?: '');
-define('SMTP_PORT', (int) (getenv('SMTP_PORT') ?: 587));
-define('SMTP_FROM', getenv('SMTP_FROM') ?: BOOKING_EMAIL_TO);
-define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'SvityazHOME');
-define('SMTP_SECURE', strtolower(trim((string) (getenv('SMTP_SECURE') ?: 'tls'))));
+define('BOOKING_EMAIL_TO', svh_env('BOOKING_EMAIL_TO', 'booking@svityazhome.com.ua'));
+define('BOOKING_EMAIL_MODE', strtolower(trim((string) (svh_env('BOOKING_EMAIL_MODE', 'auto')))));
+define('SMTP_HOST', svh_env('SMTP_HOST', ''));
+define('SMTP_USER', svh_env('SMTP_USER', ''));
+define('SMTP_PASS', svh_env('SMTP_PASS', ''));
+define('SMTP_PORT', (int) (svh_env('SMTP_PORT', 587)));
+define('SMTP_FROM', svh_env('SMTP_FROM', BOOKING_EMAIL_TO));
+define('SMTP_FROM_NAME', svh_env('SMTP_FROM_NAME', 'SvityazHOME'));
+define('SMTP_SECURE', strtolower(trim((string) (svh_env('SMTP_SECURE', 'tls')))));
 
 // Telegram integrations (alerts + moderation bot webhook)
-$telegramBotToken = trim((string) (getenv('TELEGRAM_BOT_TOKEN') ?: ''));
-$telegramChatId = trim((string) (getenv('TELEGRAM_CHAT_ID') ?: ''));
-$telegramAdminChatIds = trim((string) (getenv('TELEGRAM_ADMIN_CHAT_IDS') ?: $telegramChatId));
-$telegramWebhookSecret = trim((string) (getenv('TELEGRAM_WEBHOOK_SECRET') ?: ''));
-$telegramWebhookUrl = trim((string) (getenv('TELEGRAM_WEBHOOK_URL') ?: ''));
-$telegramAdminAccessPassword = trim((string) (getenv('TELEGRAM_ADMIN_ACCESS_PASSWORD') ?: ''));
-$telegramNotifyReviews = filter_var((string) (getenv('TELEGRAM_NOTIFY_REVIEWS') ?: '1'), FILTER_VALIDATE_BOOLEAN);
-$telegramNotifyQuestions = filter_var((string) (getenv('TELEGRAM_NOTIFY_QUESTIONS') ?: '1'), FILTER_VALIDATE_BOOLEAN);
-$telegramNotifyBookings = filter_var((string) (getenv('TELEGRAM_NOTIFY_BOOKINGS') ?: '1'), FILTER_VALIDATE_BOOLEAN);
-$telegramNotifyAdminActions = filter_var((string) (getenv('TELEGRAM_NOTIFY_ADMIN_ACTIONS') ?: '1'), FILTER_VALIDATE_BOOLEAN);
+$telegramBotToken = trim((string) (svh_env('TELEGRAM_BOT_TOKEN', '')));
+$telegramChatId = trim((string) (svh_env('TELEGRAM_CHAT_ID', '')));
+$telegramAdminChatIds = trim((string) (svh_env('TELEGRAM_ADMIN_CHAT_IDS', $telegramChatId)));
+$telegramWebhookSecret = trim((string) (svh_env('TELEGRAM_WEBHOOK_SECRET', '')));
+$telegramWebhookUrl = trim((string) (svh_env('TELEGRAM_WEBHOOK_URL', '')));
+$telegramMiniAppUrl = trim((string) (svh_env('TELEGRAM_MINIAPP_URL', rtrim(SITE_URL, '/') . '/telegram-app-v4/')));
+$telegramAdminAccessPassword = trim((string) (svh_env('TELEGRAM_ADMIN_ACCESS_PASSWORD', '')));
+$telegramNotifyReviews = filter_var((string) (svh_env('TELEGRAM_NOTIFY_REVIEWS', '1')), FILTER_VALIDATE_BOOLEAN);
+$telegramNotifyQuestions = filter_var((string) (svh_env('TELEGRAM_NOTIFY_QUESTIONS', '1')), FILTER_VALIDATE_BOOLEAN);
+$telegramNotifyBookings = filter_var((string) (svh_env('TELEGRAM_NOTIFY_BOOKINGS', '1')), FILTER_VALIDATE_BOOLEAN);
+$telegramNotifyAdminActions = filter_var((string) (svh_env('TELEGRAM_NOTIFY_ADMIN_ACTIONS', '1')), FILTER_VALIDATE_BOOLEAN);
 
 define('TELEGRAM_BOT_TOKEN', $telegramBotToken);
 define('TELEGRAM_CHAT_ID', $telegramChatId);
 define('TELEGRAM_ADMIN_CHAT_IDS', $telegramAdminChatIds);
 define('TELEGRAM_WEBHOOK_SECRET', $telegramWebhookSecret);
 define('TELEGRAM_WEBHOOK_URL', $telegramWebhookUrl);
+define('TELEGRAM_MINIAPP_URL', $telegramMiniAppUrl);
 define('TELEGRAM_ADMIN_ACCESS_PASSWORD', $telegramAdminAccessPassword);
 define('TELEGRAM_NOTIFY_REVIEWS', $telegramNotifyReviews);
 define('TELEGRAM_NOTIFY_QUESTIONS', $telegramNotifyQuestions);
@@ -240,21 +262,21 @@ define('TELEGRAM_NOTIFY_BOOKINGS', $telegramNotifyBookings);
 define('TELEGRAM_NOTIFY_ADMIN_ACTIONS', $telegramNotifyAdminActions);
 
 // Developer mode flag (client-side diagnostics, optional API debug blocks)
-define('SITE_DEV_MODE', filter_var(getenv('SITE_DEV_MODE') ?: '0', FILTER_VALIDATE_BOOLEAN));
+define('SITE_DEV_MODE', filter_var((string) svh_env('SITE_DEV_MODE', '0'), FILTER_VALIDATE_BOOLEAN));
 
 // Early-access gate for preview mode (UI password modal on the site)
 // Backward-compatible with legacy SITE_LOCK_* envs.
-$legacySiteLockEnabled = filter_var((string) (getenv('SITE_LOCK_ENABLED') ?: '0'), FILTER_VALIDATE_BOOLEAN);
-$legacySiteLockPassword = trim((string) (getenv('SITE_LOCK_PASSWORD') ?: ''));
-$earlyAccessEnabledRaw = getenv('SITE_EARLY_ACCESS_ENABLED');
+$legacySiteLockEnabled = filter_var((string) (svh_env('SITE_LOCK_ENABLED', '0')), FILTER_VALIDATE_BOOLEAN);
+$legacySiteLockPassword = trim((string) (svh_env('SITE_LOCK_PASSWORD', '')));
+$earlyAccessEnabledRaw = svh_env('SITE_EARLY_ACCESS_ENABLED', '');
 $earlyAccessEnabled = ($earlyAccessEnabledRaw === false || trim((string) $earlyAccessEnabledRaw) === '')
     ? $legacySiteLockEnabled
     : filter_var((string) $earlyAccessEnabledRaw, FILTER_VALIDATE_BOOLEAN);
-$earlyAccessPassword = trim((string) (getenv('SITE_EARLY_ACCESS_PASSWORD') ?: ''));
+$earlyAccessPassword = trim((string) (svh_env('SITE_EARLY_ACCESS_PASSWORD', '')));
 if ($earlyAccessPassword === '' && $legacySiteLockPassword !== '') {
     $earlyAccessPassword = $legacySiteLockPassword;
 }
-$earlyAccessAllowAdminPasswordRaw = getenv('SITE_EARLY_ACCESS_ALLOW_ADMIN_PASSWORD');
+$earlyAccessAllowAdminPasswordRaw = svh_env('SITE_EARLY_ACCESS_ALLOW_ADMIN_PASSWORD', '');
 $earlyAccessAllowAdminPassword = ($earlyAccessAllowAdminPasswordRaw === false || trim((string) $earlyAccessAllowAdminPasswordRaw) === '')
     ? true
     : filter_var((string) $earlyAccessAllowAdminPasswordRaw, FILTER_VALIDATE_BOOLEAN);
@@ -262,10 +284,10 @@ $earlyAccessAllowAdminPassword = ($earlyAccessAllowAdminPasswordRaw === false ||
 define('SITE_EARLY_ACCESS_ENABLED', $earlyAccessEnabled);
 define('SITE_EARLY_ACCESS_PASSWORD', $earlyAccessPassword);
 define('SITE_EARLY_ACCESS_ALLOW_ADMIN_PASSWORD', $earlyAccessAllowAdminPassword);
-define('SITE_EARLY_ACCESS_TTL', max(300, (int) (getenv('SITE_EARLY_ACCESS_TTL') ?: SESSION_LIFETIME)));
+define('SITE_EARLY_ACCESS_TTL', max(300, (int) (svh_env('SITE_EARLY_ACCESS_TTL', SESSION_LIFETIME))));
 
 // Guard against obvious nonsense/spam text in free-form fields
-define('BOOKING_BLOCK_GIBBERISH', filter_var(getenv('BOOKING_BLOCK_GIBBERISH') ?: '1', FILTER_VALIDATE_BOOLEAN));
+define('BOOKING_BLOCK_GIBBERISH', filter_var((string) svh_env('BOOKING_BLOCK_GIBBERISH', '1'), FILTER_VALIDATE_BOOLEAN));
 
 /**
  * Ініціалізація структури папок

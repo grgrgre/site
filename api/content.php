@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/site-content.php';
 
 if (send_api_headers(['GET', 'OPTIONS'])) {
@@ -14,8 +14,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
 $content = svh_read_site_content();
 
 header('Cache-Control: public, max-age=120');
-json_response([
-    'success' => true,
+svh_respond_legacy_success([
     'content' => $content,
     'updated_at' => (string) ($content['updated_at'] ?? ''),
 ]);

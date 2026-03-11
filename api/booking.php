@@ -4,7 +4,7 @@
  * Accepts JSON requests and sends booking notifications to booking@svityazhome.com.ua.
  */
 
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 if (send_api_headers(['GET', 'POST', 'OPTIONS'])) {
     exit;
@@ -21,10 +21,9 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
  */
 function booking_success(array $payload = [], int $status = 200): void
 {
-    json_response(array_merge([
+    svh_respond_success($payload, (string) ($payload['message'] ?? ''), $status, array_merge([
         'ok' => true,
-        'success' => true,
-    ], $payload), $status);
+    ], $payload));
 }
 
 /**
@@ -32,11 +31,10 @@ function booking_success(array $payload = [], int $status = 200): void
  */
 function booking_error(string $message, int $status = 400, array $payload = []): void
 {
-    json_response(array_merge([
+    svh_respond_error($message, $status, $payload, array_merge([
         'ok' => false,
-        'success' => false,
         'error' => $message,
-    ], $payload), $status);
+    ], $payload));
 }
 
 /**
@@ -512,7 +510,7 @@ function booking_store(PDO $pdo, array $booking): void
 }
 
 if ($method === 'GET') {
-    $action = strtolower(trim((string) ($_GET['action'] ?? 'csrf')));
+    $action = strtolower(svh_query_string('action', 32, 'csrf'));
     if ($action !== 'csrf') {
         booking_error('Invalid action', 400);
     }
@@ -523,6 +521,7 @@ if ($method === 'GET') {
     booking_success([
         'csrf_token' => get_csrf_token(),
         'policy' => booking_policy_payload(),
+        'message' => 'Booking form session initialized',
     ]);
 }
 
@@ -531,10 +530,7 @@ if ($method !== 'POST') {
 }
 
 try {
-    $contentType = strtolower(trim((string) ($_SERVER['CONTENT_TYPE'] ?? '')));
-    if (strpos($contentType, 'application/json') !== 0) {
-        booking_error('Content-Type must be application/json', 415);
-    }
+    svh_require_json_request();
 
     $input = read_input_payload();
     if (!is_array($input)) {
@@ -551,20 +547,19 @@ try {
         booking_error('Форма надіслана занадто швидко. Спробуйте ще раз через кілька секунд.', 400);
     }
 
-    $userAgent = sanitize_text_field($_SERVER['HTTP_USER_AGENT'] ?? '', 255);
+    $userAgent = svh_request_user_agent(255);
     $honeypot = trim((string) ($input['website'] ?? ''));
 
     $bookingId = booking_generate_id();
-    $name = sanitize_text_field($input['name'] ?? '', 100);
-    $phone = sanitize_text_field($input['phone'] ?? '', 40);
+    $name = svh_input_string($input, 'name', 100);
+    $phone = svh_input_string($input, 'phone', 40);
     $email = booking_normalize_email((string) ($input['email'] ?? '')) ?? '';
-    $checkin = sanitize_text_field($input['checkin'] ?? '', 10);
-    $checkout = sanitize_text_field($input['checkout'] ?? '', 10);
+    $checkin = svh_input_string($input, 'checkin', 10);
+    $checkout = svh_input_string($input, 'checkout', 10);
     $guests = (int) ($input['guests'] ?? 0);
-    $room = strtolower(sanitize_text_field($input['room'] ?? '', 20));
-    $message = sanitize_multiline_text($input['message'] ?? '', 2000);
-    $consentRaw = $input['consent'] ?? false;
-    $consent = filter_var($consentRaw, FILTER_VALIDATE_BOOLEAN);
+    $room = strtolower(svh_input_string($input, 'room', 20));
+    $message = svh_input_multiline($input, 'message', 2000);
+    $consent = svh_input_bool($input, 'consent', false);
 
     if ($honeypot !== '') {
         $spamRow = [
@@ -643,6 +638,31 @@ try {
     }
     if ($guests > $roomCapacity) {
         booking_error('Кількість гостей перевищує місткість вибраного номера.', 400);
+    }
+
+    $conflicts = svh_find_room_conflicts($pdo, $room, $checkinDate->format('Y-m-d'), $checkoutDate->format('Y-m-d'));
+    if (($conflicts['has_conflict'] ?? false) === true) {
+        $firstBooking = $conflicts['bookings'][0] ?? null;
+        $firstEvent = $conflicts['events'][0] ?? null;
+
+        if (is_array($firstBooking)) {
+            booking_error(
+                'На вибрані дати номер уже зайнятий (' .
+                (string) ($firstBooking['checkin_date'] ?? '') . ' → ' .
+                (string) ($firstBooking['checkout_date'] ?? '') . ', статус: ' .
+                (string) ($firstBooking['status'] ?? '') . ').',
+                409
+            );
+        }
+
+        if (is_array($firstEvent)) {
+            booking_error(
+                'На вибрані дати номер тимчасово заблоковано (' .
+                (string) ($firstEvent['start_date'] ?? '') . ' → ' .
+                (string) ($firstEvent['end_date'] ?? '') . ').',
+                409
+            );
+        }
     }
 
     if (mb_strlen($message) > 2000) {

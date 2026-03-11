@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../api/config.php';
+require_once __DIR__ . '/storage.php';
 
 function svh_site_content_defaults(): array
 {
@@ -196,20 +197,7 @@ function svh_read_site_content(): array
     initStorage();
 
     $defaults = svh_site_content_defaults();
-    if (!is_file(CONTENT_FILE_PATH)) {
-        return $defaults;
-    }
-
-    $raw = file_get_contents(CONTENT_FILE_PATH);
-    if (!is_string($raw) || trim($raw) === '') {
-        return $defaults;
-    }
-
-    $decoded = json_decode($raw, true);
-    if (!is_array($decoded)) {
-        return $defaults;
-    }
-
+    $decoded = svh_read_json_file(CONTENT_FILE_PATH, []);
     return svh_site_content_merge($defaults, $decoded);
 }
 
@@ -220,11 +208,5 @@ function svh_write_site_content(array $data): bool
     $payload = svh_site_content_merge(svh_site_content_defaults(), $data);
     $payload['updated_at'] = date('c');
 
-    $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    if ($json === false) {
-        return false;
-    }
-
-    return file_put_contents(CONTENT_FILE_PATH, $json, LOCK_EX) !== false;
+    return svh_write_json_file(CONTENT_FILE_PATH, $payload);
 }
-

@@ -139,6 +139,157 @@ function telegram_admin_chat_ids(): array
 }
 
 /**
+ * URL-safe base64 encode helper for Telegram Mini App tokens.
+ */
+function telegram_miniapp_b64url_encode(string $value): string
+{
+    return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+}
+
+/**
+ * URL-safe base64 decode helper for Telegram Mini App tokens.
+ */
+function telegram_miniapp_b64url_decode(string $value): ?string
+{
+    $encoded = trim($value);
+    if ($encoded === '' || preg_match('/^[A-Za-z0-9_-]+$/', $encoded) !== 1) {
+        return null;
+    }
+
+    $padding = strlen($encoded) % 4;
+    if ($padding > 0) {
+        $encoded .= str_repeat('=', 4 - $padding);
+    }
+
+    $decoded = base64_decode(strtr($encoded, '-_', '+/'), true);
+    return is_string($decoded) ? $decoded : null;
+}
+
+/**
+ * Secret key for signed Telegram Mini App access tokens.
+ */
+function telegram_miniapp_access_token_secret(): string
+{
+    static $secret = null;
+    if (is_string($secret)) {
+        return $secret;
+    }
+
+    $botToken = trim((string) TELEGRAM_BOT_TOKEN);
+    if ($botToken === '') {
+        $secret = '';
+        return $secret;
+    }
+
+    $secret = hash_hmac('sha256', 'svh-telegram-miniapp-access', $botToken, true);
+    return $secret;
+}
+
+/**
+ * Issue short-lived fallback token for Mini App requests.
+ */
+function telegram_miniapp_access_token_issue(string $chatId, int $ttl = 12 * 3600): string
+{
+    $chatId = trim($chatId);
+    if ($chatId === '' || preg_match('/^-?\d{3,20}$/', $chatId) !== 1) {
+        return '';
+    }
+
+    $secret = telegram_miniapp_access_token_secret();
+    if ($secret === '') {
+        return '';
+    }
+
+    $ttl = max(300, min(31 * 24 * 3600, $ttl));
+    $now = time();
+    $payload = [
+        'chat_id' => $chatId,
+        'iat' => $now,
+        'exp' => $now + $ttl,
+    ];
+    $payloadRaw = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if (!is_string($payloadRaw) || $payloadRaw === '') {
+        return '';
+    }
+
+    $payloadPart = telegram_miniapp_b64url_encode($payloadRaw);
+    $signaturePart = telegram_miniapp_b64url_encode(hash_hmac('sha256', $payloadPart, $secret, true));
+    return $payloadPart . '.' . $signaturePart;
+}
+
+/**
+ * Validate fallback Mini App access token.
+ *
+ * @return array{chat_id:string,iat:int,exp:int}|null
+ */
+function telegram_miniapp_access_token_validate(string $token): ?array
+{
+    $raw = trim($token);
+    if ($raw === '') {
+        return null;
+    }
+
+    $secret = telegram_miniapp_access_token_secret();
+    if ($secret === '') {
+        return null;
+    }
+
+    $parts = explode('.', $raw, 2);
+    if (count($parts) !== 2) {
+        return null;
+    }
+
+    $payloadPart = trim((string) ($parts[0] ?? ''));
+    $signaturePart = trim((string) ($parts[1] ?? ''));
+    if ($payloadPart === '' || $signaturePart === '') {
+        return null;
+    }
+
+    $expectedSignature = telegram_miniapp_b64url_encode(hash_hmac('sha256', $payloadPart, $secret, true));
+    if (!hash_equals($expectedSignature, $signaturePart)) {
+        return null;
+    }
+
+    $payloadRaw = telegram_miniapp_b64url_decode($payloadPart);
+    if (!is_string($payloadRaw) || $payloadRaw === '') {
+        return null;
+    }
+
+    $payload = json_decode($payloadRaw, true);
+    if (!is_array($payload)) {
+        return null;
+    }
+
+    $chatId = trim((string) ($payload['chat_id'] ?? ''));
+    if ($chatId === '' || preg_match('/^-?\d{3,20}$/', $chatId) !== 1) {
+        return null;
+    }
+
+    $issuedAt = (int) ($payload['iat'] ?? 0);
+    $expiresAt = (int) ($payload['exp'] ?? 0);
+    $now = time();
+    if ($expiresAt <= 0 || $expiresAt < ($now - 60)) {
+        return null;
+    }
+
+    if ($issuedAt <= 0) {
+        $issuedAt = $now;
+    }
+    if ($issuedAt > ($now + 300)) {
+        return null;
+    }
+    if (($expiresAt - $issuedAt) > (31 * 24 * 3600 + 300)) {
+        return null;
+    }
+
+    return [
+        'chat_id' => $chatId,
+        'iat' => $issuedAt,
+        'exp' => $expiresAt,
+    ];
+}
+
+/**
  * Send Telegram Bot API request.
  */
 function telegram_api_request(string $apiMethod, array $params = []): ?array

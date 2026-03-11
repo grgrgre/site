@@ -9,7 +9,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
     $id = (int) ($_POST['id'] ?? 0);
     $status = admin_post_field('status', 32);
-    $allowed = ['new', 'new_email_failed', 'confirmed', 'cancelled', 'done', 'spam_honeypot'];
+    $allowed = ['new', 'waiting', 'confirmed', 'rejected', 'cancelled', 'done', 'new_email_failed', 'spam_honeypot'];
 
     if ($id > 0 && in_array($status, $allowed, true)) {
         $stmt = admin_pdo()->prepare('UPDATE bookings SET status = :status WHERE id = :id');
@@ -32,11 +32,11 @@ $closedCount = 0;
 
 foreach ($bookings as $booking) {
     $status = (string) ($booking['status'] ?? '');
-    if (in_array($status, ['new', 'new_email_failed'], true)) {
+    if (in_array($status, ['new', 'new_email_failed', 'waiting'], true)) {
         $newCount++;
     } elseif ($status === 'confirmed') {
         $confirmedCount++;
-    } elseif (in_array($status, ['cancelled', 'done', 'spam_honeypot'], true)) {
+    } elseif (in_array($status, ['rejected', 'cancelled', 'done', 'spam_honeypot'], true)) {
         $closedCount++;
     }
 }
@@ -76,7 +76,7 @@ admin_render_header('Запити бронювання', 'requests.php');
   <div class="admin-request-list">
     <?php foreach ($bookings as $booking): ?>
       <?php $statusMeta = admin_booking_status_meta((string) ($booking['status'] ?? 'new')); ?>
-      <article class="admin-request-card">
+      <article class="admin-request-card" id="booking-<?= admin_e((string) ($booking['booking_id'] ?? '')) ?>">
         <div class="admin-request-card__head">
           <div>
             <h3 class="admin-request-card__title"><?= admin_e((string) ($booking['name'] ?? '')) ?></h3>

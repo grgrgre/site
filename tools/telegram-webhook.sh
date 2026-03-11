@@ -19,6 +19,7 @@ load_env_file "${ROOT}/.env"
 TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 TELEGRAM_WEBHOOK_SECRET="${TELEGRAM_WEBHOOK_SECRET:-}"
 TELEGRAM_WEBHOOK_URL="${TELEGRAM_WEBHOOK_URL:-}"
+TELEGRAM_MINIAPP_URL="${TELEGRAM_MINIAPP_URL:-https://svityazhome.com.ua/telegram-app-v4/}"
 
 if [[ -z "${TELEGRAM_BOT_TOKEN}" ]]; then
   echo "[ERROR] TELEGRAM_BOT_TOKEN is empty. Set it in .env"
@@ -69,30 +70,44 @@ webhook_info() {
 }
 
 set_commands() {
-  local commands='[
-    {"command":"menu","description":"Показати кнопки меню"},
-    {"command":"help","description":"Список команд"},
-    {"command":"status","description":"Статус сайту"},
-    {"command":"today","description":"Звіт за сьогодні"},
-    {"command":"pending","description":"Pending відгуки"},
-    {"command":"approve","description":"Схвалити відгук: /approve ID"},
-    {"command":"reject","description":"Відхилити відгук: /reject ID"},
-    {"command":"add_review","description":"Додати відгук"},
-    {"command":"bookings","description":"Нові заявки"},
-    {"command":"latest","description":"Остання заявка"},
-    {"command":"booking","description":"Деталі заявки"},
-    {"command":"find","description":"Пошук заявки"},
-    {"command":"reply","description":"Відповідь на заявку"},
-    {"command":"change_room","description":"Змінити номер у заявці"},
-    {"command":"arrivals","description":"Заїзди: today|tomorrow"},
-    {"command":"departures","description":"Виїзди: today"},
-    {"command":"actions","description":"Останні дії адмінки"},
-    {"command":"login","description":"Вхід з нового пристрою"},
-    {"command":"logout","description":"Вийти з поточного пристрою"}
-  ]'
+  local commands
+  commands="$(cat <<'JSON'
+[
+  {"command":"menu","description":"Головне меню з кнопками"},
+  {"command":"app","description":"Відкрити Telegram App заявок"},
+  {"command":"bookings","description":"Останні заявки"},
+  {"command":"latest","description":"Відкрити останню заявку"},
+  {"command":"pending","description":"Відгуки на модерації"},
+  {"command":"reply","description":"Відповісти гостю по заявці"},
+  {"command":"change_room","description":"Змінити номер у заявці"},
+  {"command":"today","description":"Підсумок на сьогодні"},
+  {"command":"tomorrow","description":"Підсумок на завтра"},
+  {"command":"free_rooms","description":"Вільні номери на дати"},
+  {"command":"find","description":"Пошук заявки"},
+  {"command":"status","description":"Стан бота і сайту"},
+  {"command":"help","description":"Повна довідка"},
+  {"command":"login","description":"Вхід з нового пристрою"},
+  {"command":"logout","description":"Вийти з цього пристрою"}
+]
+JSON
+)"
 
+  echo "[INFO] Updating bot commands"
   curl -fsS -X POST "$(api_url setMyCommands)" \
     --data-urlencode "commands=${commands}"
+  echo
+
+  echo "[INFO] Updating bot menu button"
+  curl -fsS -X POST "$(api_url setChatMenuButton)" \
+    --data-urlencode "menu_button={\"type\":\"web_app\",\"text\":\"Заявки\",\"web_app\":{\"url\":\"${TELEGRAM_MINIAPP_URL}\"}}"
+  echo
+
+  echo "[INFO] Updating bot descriptions"
+  curl -fsS -X POST "$(api_url setMyShortDescription)" \
+    --data-urlencode 'short_description=Заявки SvityazHOME в Telegram App'
+  echo
+  curl -fsS -X POST "$(api_url setMyDescription)" \
+    --data-urlencode 'description=SvityazHOME: Telegram App для заявок, деталей бронювання, пошуку і швидких дій.'
   echo
 }
 
@@ -104,7 +119,8 @@ Commands:
   info                 Show current webhook info
   set [url]            Set webhook to URL or TELEGRAM_WEBHOOK_URL from .env
   delete               Delete webhook
-  set-commands         Register bot command hints
+  set-commands         Register commands, menu button and bot descriptions
+  setup-ui             Same as set-commands
 
 Required:
   TELEGRAM_BOT_TOKEN in .env
@@ -112,6 +128,7 @@ Required:
 Optional:
   TELEGRAM_WEBHOOK_URL
   TELEGRAM_WEBHOOK_SECRET
+  TELEGRAM_MINIAPP_URL
 EOF
 }
 
@@ -127,6 +144,9 @@ case "${command}" in
     delete_webhook
     ;;
   set-commands)
+    set_commands
+    ;;
+  setup-ui)
     set_commands
     ;;
   *)

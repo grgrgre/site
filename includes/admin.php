@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../api/security.php';
+require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/site-content.php';
 
 initStorage();
@@ -65,8 +65,7 @@ function admin_current_token(): string
 
 function admin_session_fingerprint(): string
 {
-    $userAgent = substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? 'unknown'), 0, 200);
-    return hash('sha256', $userAgent);
+    return svh_request_fingerprint();
 }
 
 function admin_login_rate_limit_action(): string
@@ -117,20 +116,17 @@ function admin_require_login(): void
 
 function admin_login(string $email, string $password): bool
 {
-    $credentials = [
-        'email' => $email,
-        'password' => $password,
-    ];
-
-    if (!is_admin_login_password_valid($credentials)) {
+    $issued = svh_issue_admin_session(
+        admin_db(),
+        $email,
+        $password,
+        admin_ip(),
+        (string) ($_SERVER['HTTP_USER_AGENT'] ?? '')
+    );
+    if (!is_array($issued)) {
         return false;
     }
 
-    session_regenerate_id(true);
-    $token = admin_db()->createAdminSession(admin_ip(), (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
-    $_SESSION['admin_session_token'] = $token;
-    $_SESSION['admin_login_email'] = get_admin_login_email();
-    $_SESSION['admin_session_fingerprint'] = admin_session_fingerprint();
     admin_db()->logAdminAction('admin_login', 'PHP admin panel login', admin_ip());
 
     return true;
@@ -194,6 +190,7 @@ function admin_nav_items(): array
         'content.php' => 'Контент',
         'files.php' => 'Файли + AI',
         'rooms.php' => 'Номери',
+        'calendar.php' => 'Календар',
         'reviews.php' => 'Відгуки',
         'contacts.php' => 'Контакти',
         'gallery.php' => 'Галерея',
@@ -243,6 +240,14 @@ function admin_page_meta(string $active, string $title): array
                 ['label' => 'Запити', 'path' => 'requests.php', 'tone' => 'ghost'],
             ],
         ],
+        'calendar.php' => [
+            'eyebrow' => 'Календар бронювань',
+            'description' => 'Повний перегляд зайнятості номерів по датах, заїздах, виїздах і ручних блокуваннях.',
+            'actions' => [
+                ['label' => 'Запити', 'path' => 'requests.php', 'tone' => 'ghost'],
+                ['label' => 'Номери', 'path' => 'rooms.php', 'tone' => 'ghost'],
+            ],
+        ],
         'reviews.php' => [
             'eyebrow' => 'Відгуки і питання',
             'description' => 'Модерація, редагування і публікація відгуків, а також перегляд питань від гостей.',
@@ -286,10 +291,12 @@ function admin_booking_status_options(): array
 {
     return [
         'new' => 'Нова',
-        'new_email_failed' => 'Нова, лист не пішов',
+        'waiting' => 'Очікує',
         'confirmed' => 'Підтверджена',
+        'rejected' => 'Відхилена',
         'cancelled' => 'Скасована',
         'done' => 'Завершена',
+        'new_email_failed' => 'Нова, лист не пішов',
         'spam_honeypot' => 'Спам / honeypot',
     ];
 }
@@ -300,9 +307,9 @@ function admin_booking_status_meta(string $status): array
     $label = $options[$status] ?? $status;
     $tone = 'default';
 
-    if (in_array($status, ['new', 'new_email_failed'], true)) {
+    if (in_array($status, ['new', 'new_email_failed', 'waiting'], true)) {
         $tone = 'warning';
-    } elseif (in_array($status, ['cancelled', 'spam_honeypot'], true)) {
+    } elseif (in_array($status, ['cancelled', 'rejected', 'spam_honeypot'], true)) {
         $tone = 'danger';
     } elseif (in_array($status, ['confirmed', 'done'], true)) {
         $tone = 'success';
@@ -427,64 +434,27 @@ function admin_room_path(int $roomId): string
 
 function admin_read_room(int $roomId): array
 {
-    $path = admin_room_path($roomId);
-    if (!is_file($path)) {
-        return [];
-    }
-
-    $raw = file_get_contents($path);
-    $decoded = is_string($raw) ? json_decode($raw, true) : null;
-
-    return is_array($decoded) ? $decoded : [];
+    return svh_read_room_json($roomId);
 }
 
 function admin_write_room(int $roomId, array $room): bool
 {
-    $path = admin_room_path($roomId);
-    $dir = dirname($path);
-    if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
-        return false;
-    }
-
     $room['id'] = $roomId;
     $room['guests'] = (int) ($room['capacity'] ?? $room['guests'] ?? 0);
     $room['price'] = (int) ($room['pricePerNight'] ?? 0) > 0 ? ((int) $room['pricePerNight']) . ' грн' : '';
     $room['cover'] = (string) ($room['cover'] ?? (($room['images'][0] ?? '')));
 
-    $json = json_encode($room, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    if ($json === false) {
-        return false;
-    }
-
-    return file_put_contents($path, $json, LOCK_EX) !== false;
+    return svh_write_room_json($roomId, $room);
 }
 
 function admin_reviews_data(): array
 {
-    $raw = is_file(REVIEWS_FILE_PATH) ? file_get_contents(REVIEWS_FILE_PATH) : false;
-    $decoded = is_string($raw) ? json_decode($raw, true) : null;
-
-    if (!is_array($decoded)) {
-        $decoded = [];
-    }
-
-    $decoded['approved'] = isset($decoded['approved']) && is_array($decoded['approved']) ? $decoded['approved'] : [];
-    $decoded['pending'] = isset($decoded['pending']) && is_array($decoded['pending']) ? $decoded['pending'] : [];
-    $decoded['questions'] = isset($decoded['questions']) && is_array($decoded['questions']) ? $decoded['questions'] : [];
-    $decoded['topics'] = isset($decoded['topics']) && is_array($decoded['topics']) ? $decoded['topics'] : [];
-    $decoded['nextId'] = (int) ($decoded['nextId'] ?? 100);
-
-    return $decoded;
+    return svh_read_reviews_storage();
 }
 
 function admin_save_reviews_data(array $data): bool
 {
-    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    if ($json === false) {
-        return false;
-    }
-
-    return file_put_contents(REVIEWS_FILE_PATH, $json, LOCK_EX) !== false;
+    return svh_write_reviews_storage($data);
 }
 
 function admin_find_review(array $data, int $id): array

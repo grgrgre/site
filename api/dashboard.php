@@ -4,7 +4,7 @@
  * Returns aggregated operational metrics for charts in admin stats page.
  */
 
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 if (send_api_headers(['GET', 'OPTIONS'])) {
     exit;
@@ -14,48 +14,11 @@ initStorage();
 $db = Database::getInstance();
 $pdo = $db->getPdo();
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-$REVIEWS_FILE = DATA_DIR . 'reviews.json';
-
 if ($method !== 'GET') {
     error_response('Method not allowed', 405);
 }
 
 require_admin_auth($db);
-
-function dashboard_reviews_default_payload(): array
-{
-    return [
-        'approved' => [],
-        'pending' => [],
-        'questions' => [],
-        'nextId' => 100,
-    ];
-}
-
-function dashboard_read_reviews_data(string $filePath): array
-{
-    if (!is_file($filePath)) {
-        return dashboard_reviews_default_payload();
-    }
-
-    $raw = file_get_contents($filePath);
-    if (!is_string($raw) || trim($raw) === '') {
-        return dashboard_reviews_default_payload();
-    }
-
-    $decoded = json_decode($raw, true);
-    if (!is_array($decoded)) {
-        return dashboard_reviews_default_payload();
-    }
-
-    $data = array_merge(dashboard_reviews_default_payload(), $decoded);
-    foreach (['approved', 'pending', 'questions'] as $key) {
-        if (!isset($data[$key]) || !is_array($data[$key])) {
-            $data[$key] = [];
-        }
-    }
-    return $data;
-}
 
 function dashboard_date_labels(int $days): array
 {
@@ -259,7 +222,7 @@ try {
         ];
     }, ($recentActionsStmt->fetchAll() ?: []));
 
-    $reviewsData = dashboard_read_reviews_data($REVIEWS_FILE);
+    $reviewsData = svh_read_reviews_storage();
     $approvedReviews = (int) count($reviewsData['approved']);
     $pendingReviews = (int) count($reviewsData['pending']);
     $questionsTotal = (int) count($reviewsData['questions']);
@@ -296,8 +259,7 @@ try {
         ];
     }
 
-    json_response([
-        'success' => true,
+    svh_respond_legacy_success([
         'period_days' => $days,
         'summary' => [
             'bookings_total' => $bookingsTotal,
@@ -320,4 +282,3 @@ try {
     error_log('Dashboard API error: ' . $e->getMessage());
     error_response('Внутрішня помилка сервера', 500);
 }
-

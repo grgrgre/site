@@ -4,7 +4,7 @@
  * Admin file editor with security
  */
 
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 if (send_api_headers(['GET', 'POST', 'OPTIONS'])) {
     exit;
@@ -46,13 +46,31 @@ $ALLOWED_PATH_OVERRIDES = [
 $ROOT_DIR = dirname(__DIR__);
 
 function jsonResponse($data, $code = 200) {
-    http_response_code($code);
-    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    exit;
+    if (!is_array($data) || !array_key_exists('success', $data)) {
+        json_response((array) $data, $code);
+    }
+
+    $payload = $data;
+    $message = isset($payload['message']) && is_string($payload['message']) ? $payload['message'] : null;
+    $success = (bool) ($payload['success'] ?? false);
+    $error = isset($payload['error']) && is_string($payload['error']) ? $payload['error'] : 'Request failed';
+    $nestedData = isset($payload['data']) && is_array($payload['data']) ? $payload['data'] : [];
+
+    unset($payload['success'], $payload['error'], $payload['message'], $payload['data']);
+
+    if ($nestedData === []) {
+        $nestedData = $payload;
+    }
+
+    if ($success) {
+        svh_respond_success($nestedData, $message, $code, $payload);
+    }
+
+    svh_respond_error($error, $code, is_array($nestedData) ? $nestedData : [], array_merge($payload, ['error' => $error]));
 }
 
 function errorResponse($message, $code = 400) {
-    jsonResponse(['success' => false, 'error' => $message], $code);
+    svh_respond_error((string) $message, $code, [], ['error' => (string) $message]);
 }
 
 function normalizeRelativePath(string $path): string
@@ -171,16 +189,7 @@ function streamBackupDownload($filePath, $downloadName) {
 
 function sanitizeBackupUploadBase(string $name): string
 {
-    $base = strtolower(pathinfo($name, PATHINFO_FILENAME));
-    $base = preg_replace('/[^a-z0-9._-]+/i', '-', $base) ?? '';
-    $base = trim($base, '-_.');
-    if ($base === '') {
-        $base = 'uploaded';
-    }
-    if (strlen($base) > 60) {
-        $base = substr($base, 0, 60);
-    }
-    return $base;
+    return svh_upload_base_name($name, 'uploaded');
 }
 
 function parseIniSizeToBytes($value): int
@@ -229,19 +238,7 @@ function describeUploadError(int $code): string
 
 function isZipSignatureValid(string $filePath): bool
 {
-    if (!is_file($filePath) || !is_readable($filePath)) {
-        return false;
-    }
-
-    $handle = @fopen($filePath, 'rb');
-    if (!$handle) {
-        return false;
-    }
-
-    $signature = (string) fread($handle, 4);
-    fclose($handle);
-
-    return in_array($signature, ["PK\x03\x04", "PK\x05\x06", "PK\x07\x08"], true);
+    return svh_zip_signature_valid($filePath);
 }
 
 function handleStorageBackupUpload(Database $db, string $ip): void
@@ -267,48 +264,32 @@ function handleStorageBackupUpload(Database $db, string $ip): void
         errorResponse(describeUploadError($uploadError), 400);
     }
 
-    $tmp = (string) ($file['tmp_name'] ?? '');
-    if ($tmp === '' || !is_uploaded_file($tmp)) {
-        errorResponse('Invalid upload source', 400);
-    }
-
-    $size = (int) ($file['size'] ?? 0);
-    if ($size <= 0) {
-        errorResponse('Empty file', 400);
-    }
-    if ($size > 512 * 1024 * 1024) {
-        errorResponse('ZIP is too large. Maximum 512 MB.', 400);
-    }
-
-    $original = (string) ($file['name'] ?? 'backup.zip');
-    if (!preg_match('/\.zip$/i', $original)) {
-        errorResponse('Only .zip files are allowed', 400);
-    }
-
-    if (!isZipSignatureValid($tmp)) {
-        errorResponse('Uploaded file is not a valid ZIP archive', 400);
+    $validated = svh_validate_uploaded_file(
+        $file,
+        [
+            'application/zip' => 'zip',
+            'application/octet-stream' => 'zip',
+            'application/x-zip' => 'zip',
+            'application/x-zip-compressed' => 'zip',
+            'multipart/x-zip' => 'zip',
+        ],
+        512 * 1024 * 1024,
+        'svh_zip_signature_valid'
+    );
+    if (!($validated['success'] ?? false)) {
+        errorResponse((string) ($validated['error'] ?? 'Invalid ZIP upload'), 400);
     }
 
     $backupDir = rtrim(STORAGE_BACKUPS_DIR, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-    $base = sanitizeBackupUploadBase($original);
+    $base = sanitizeBackupUploadBase((string) ($validated['original_name'] ?? 'backup.zip'));
     $filenameBase = 'storage-backup-' . date('Y-m-d_H-i-s') . '__import-' . $base;
-    $filename = $filenameBase . '.zip';
+    $stored = svh_store_uploaded_file($validated, $backupDir, $filenameBase);
+    if (!($stored['success'] ?? false)) {
+        errorResponse((string) ($stored['error'] ?? 'Failed to store uploaded backup'), 500);
+    }
+
+    $filename = (string) ($stored['filename'] ?? '');
     $targetPath = $backupDir . $filename;
-    $counter = 1;
-    while (file_exists($targetPath) && $counter < 1000) {
-        $filename = $filenameBase . '-' . $counter . '.zip';
-        $targetPath = $backupDir . $filename;
-        $counter++;
-    }
-    if (file_exists($targetPath)) {
-        errorResponse('Failed to generate unique backup name', 500);
-    }
-
-    if (!move_uploaded_file($tmp, $targetPath)) {
-        errorResponse('Failed to store uploaded backup', 500);
-    }
-
-    @chmod($targetPath, 0640);
 
     $meta = parse_storage_backup_filename($filename);
     $db->logAdminAction('storage_backup_upload', $filename, $ip);
@@ -662,11 +643,11 @@ if ($method === 'POST') {
 // ========== ROUTES ==========
 
 if ($method === 'GET') {
-    $action = $_GET['action'] ?? 'list';
+    $action = svh_query_string('action', 64, 'list');
 
     // List files in directory
     if ($action === 'list') {
-        $path = $_GET['path'] ?? '/';
+        $path = svh_query_string('path', 2048, '/');
         $fullPath = $ROOT_DIR . '/' . ltrim($path, '/');
 
         if (!isPathSafe($fullPath, $ROOT_DIR, $FORBIDDEN_PATHS, $ALLOWED_PATH_OVERRIDES)) {
@@ -721,7 +702,7 @@ if ($method === 'GET') {
 
     // Read file content
     if ($action === 'read') {
-        $path = $_GET['path'] ?? '';
+        $path = svh_query_string('path', 2048, '');
         if (empty($path)) errorResponse('Path required');
 
         $fullPath = $ROOT_DIR . '/' . ltrim($path, '/');
@@ -769,7 +750,7 @@ if ($method === 'GET') {
 
     // Download storage backup (auth protected)
     if ($action === 'download-storage-backup') {
-        $name = (string) ($_GET['name'] ?? '');
+        $name = svh_query_string('name', 255, '');
         $filePath = resolveBackupPath($name);
         if (!$filePath) {
             errorResponse('Backup not found', 404);

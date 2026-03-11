@@ -4,7 +4,7 @@
  * Secure room data and image management endpoint.
  */
 
-require_once __DIR__ . '/security.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
 
 if (send_api_headers(['GET', 'POST', 'OPTIONS'])) {
     exit;
@@ -324,12 +324,7 @@ function get_room(int $id): ?array
         return build_fallback_room($id);
     }
 
-    $raw = file_get_contents($file);
-    if ($raw === false) {
-        return build_fallback_room($id);
-    }
-
-    $decoded = json_decode($raw, true);
+    $decoded = svh_read_json_file($file, []);
     if (!is_array($decoded)) {
         return build_fallback_room($id);
     }
@@ -339,45 +334,14 @@ function get_room(int $id): ?array
 
 function save_room(int $id, array $data): bool
 {
-    if (!is_dir(ROOMS_DATA_DIR) && !mkdir(ROOMS_DATA_DIR, 0755, true) && !is_dir(ROOMS_DATA_DIR)) {
-        return false;
-    }
-
-    $file = get_room_path($id);
-    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    if ($json === false) {
-        return false;
-    }
-
-    try {
-        $suffix = bin2hex(random_bytes(6));
-    } catch (Throwable $e) {
-        $suffix = (string) mt_rand(100000, 999999);
-    }
-
-    $tmp = $file . '.tmp.' . $suffix;
-    if (file_put_contents($tmp, $json, LOCK_EX) === false) {
-        return false;
-    }
-
-    if (!rename($tmp, $file)) {
-        @unlink($tmp);
-        return false;
-    }
-
-    @chmod($file, 0640);
-    return true;
+    return svh_write_json_file(get_room_path($id), $data);
 }
 
 function get_all_rooms(): array
 {
     $roomsById = [];
     foreach (glob(ROOMS_DATA_DIR . 'room-*.json') ?: [] as $file) {
-        $raw = file_get_contents($file);
-        if ($raw === false) {
-            continue;
-        }
-        $room = json_decode($raw, true);
+        $room = svh_read_json_file($file, []);
         if (!is_array($room)) {
             continue;
         }
@@ -409,50 +373,12 @@ function get_all_rooms(): array
 
 function get_room_images_map(): array
 {
-    if (!file_exists(ROOM_IMAGES_MAP)) {
-        return [];
-    }
-
-    $raw = file_get_contents(ROOM_IMAGES_MAP);
-    if ($raw === false) {
-        return [];
-    }
-
-    $decoded = json_decode($raw, true);
-    return is_array($decoded) ? $decoded : [];
+    return svh_read_room_images_map(ROOM_IMAGES_MAP);
 }
 
 function save_room_images_map(array $data): bool
 {
-    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    if ($json === false) {
-        return false;
-    }
-
-    $target = ROOM_IMAGES_MAP;
-    $dir = dirname($target);
-    if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
-        return false;
-    }
-
-    try {
-        $suffix = bin2hex(random_bytes(6));
-    } catch (Throwable $e) {
-        $suffix = (string) mt_rand(100000, 999999);
-    }
-
-    $tmp = $target . '.tmp.' . $suffix;
-    if (file_put_contents($tmp, $json, LOCK_EX) === false) {
-        return false;
-    }
-
-    if (!rename($tmp, $target)) {
-        @unlink($tmp);
-        return false;
-    }
-
-    @chmod($target, 0640);
-    return true;
+    return svh_write_room_images_map($data, ROOM_IMAGES_MAP);
 }
 
 function normalize_room_image_path(string $path): string

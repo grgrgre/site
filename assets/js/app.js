@@ -4416,13 +4416,26 @@ function setText(id, text) {
     const ratingInput = document.getElementById('review-rating');
     if (!starRating || !ratingInput) return;
 
-    const stars = starRating.querySelectorAll('.star');
+    const stars = Array.from(starRating.querySelectorAll('.star'));
+    if (!stars.length) return;
+
+    const clampRating = (ratingRaw) => Math.max(1, Math.min(5, Number.parseInt(ratingRaw, 10) || 5));
+    const focusStar = (ratingRaw) => {
+      const rating = clampRating(ratingRaw);
+      const target = stars[rating - 1];
+      if (target && typeof target.focus === 'function') target.focus();
+    };
 
     function updateStars(ratingRaw) {
-      const rating = Math.max(1, Math.min(5, Number.parseInt(ratingRaw, 10) || 5));
+      const rating = clampRating(ratingRaw);
       stars.forEach((star, index) => {
+        const isFilled = index < rating;
+        const isChecked = index + 1 === rating;
+        star.setAttribute('role', 'radio');
+        star.setAttribute('aria-checked', isChecked ? 'true' : 'false');
+        star.setAttribute('tabindex', isChecked ? '0' : '-1');
         star.textContent = index < rating ? '★' : '☆';
-        star.classList.toggle('active', index < rating);
+        star.classList.toggle('active', isFilled);
       });
       ratingInput.value = String(rating);
     }
@@ -4432,8 +4445,42 @@ function setText(id, text) {
         updateStars(this.dataset.rating);
       });
 
+      star.addEventListener('keydown', (event) => {
+        const currentRating = clampRating(ratingInput.value || star.dataset.rating);
+        if (event.key === ' ' || event.key === 'Enter') {
+          event.preventDefault();
+          updateStars(star.dataset.rating);
+          return;
+        }
+        if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          const next = Math.min(5, currentRating + 1);
+          updateStars(next);
+          focusStar(next);
+          return;
+        }
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+          event.preventDefault();
+          const prev = Math.max(1, currentRating - 1);
+          updateStars(prev);
+          focusStar(prev);
+          return;
+        }
+        if (event.key === 'Home') {
+          event.preventDefault();
+          updateStars(1);
+          focusStar(1);
+          return;
+        }
+        if (event.key === 'End') {
+          event.preventDefault();
+          updateStars(5);
+          focusStar(5);
+        }
+      });
+
       star.addEventListener('mouseenter', function() {
-        const rating = Math.max(1, Math.min(5, Number.parseInt(this.dataset.rating, 10) || 5));
+        const rating = clampRating(this.dataset.rating);
         stars.forEach((node, index) => {
           node.textContent = index < rating ? '★' : '☆';
         });
