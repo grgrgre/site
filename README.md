@@ -41,8 +41,7 @@ svityazhome.com.ua/
 │
 ├── assets/                     # Статичні ресурси
 │   ├── css/
-│   │   ├── styles.css          # Джерело стилів
-│   │   └── styles.min.css      # Мінімізований CSS для продакшну
+│   │   └── site.css            # Єдиний CSS для публічних сторінок
 │   ├── js/
 │   │   ├── app.js              # Головний JavaScript
 │   │   └── easter-egg.js       # 🎣 Пасхалка «Рибалка на Світязі»

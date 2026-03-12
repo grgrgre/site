@@ -42,11 +42,7 @@ Generated: 2026-03-11T21:36:57Z
 - `api/telegram-admin.php`
 - `api/telegram-miniapp.php`
 - `api/telegram.php`
-- `assets/css/critical.css`
-- `assets/css/site-polish.css`
-- `assets/css/site-refresh.css`
-- `assets/css/styles.css`
-- `assets/css/styles.min.css`
+- `assets/css/site.css`
 - `assets/fonts/fraunces-v38-latin-wght600-700.woff2`
 - `assets/fonts/manrope-v20-cyrillic-wght400-700.woff2`
 - `assets/fonts/manrope-v20-latin-wght400-700.woff2`

@@ -72,6 +72,9 @@ Predeploy checks:
 - If room data changes, check both `rooms/room-*/index.html` and `storage/data/rooms/room-*.json`.
 - If sitemap-relevant routes change, review `sitemap.xml` and `tools/generate-sitemap.php`.
 - If admin functionality changes, inspect both `svh-ctrl-x7k9/` and the matching `api/` endpoints.
+- CSS policy for public site pages: use only one stylesheet file, `assets/css/site.css`.
+- Keep exactly one public CSS include per page (`<link rel="stylesheet" href="/assets/css/site.css">`).
+- Admin and Telegram mini-app styles are separate and must stay independent (`svh-ctrl-x7k9/assets/admin.css`, `telegram-app*/app.css`).
 
 ## Preferred Workflow
 

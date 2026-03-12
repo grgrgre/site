@@ -56,11 +56,7 @@ TELEGRAM_ADMIN_PASSWORD=
 - https://raw.githubusercontent.com/grgrgre/site/main/api/telegram-admin.php
 - https://raw.githubusercontent.com/grgrgre/site/main/api/telegram-miniapp.php
 - https://raw.githubusercontent.com/grgrgre/site/main/api/telegram.php
-- https://raw.githubusercontent.com/grgrgre/site/main/assets/css/critical.css
-- https://raw.githubusercontent.com/grgrgre/site/main/assets/css/site-polish.css
-- https://raw.githubusercontent.com/grgrgre/site/main/assets/css/site-refresh.css
-- https://raw.githubusercontent.com/grgrgre/site/main/assets/css/styles.css
-- https://raw.githubusercontent.com/grgrgre/site/main/assets/css/styles.min.css
+- https://raw.githubusercontent.com/grgrgre/site/main/assets/css/site.css
 - https://raw.githubusercontent.com/grgrgre/site/main/assets/js/app.js
 - https://raw.githubusercontent.com/grgrgre/site/main/assets/js/booking.js
 - https://raw.githubusercontent.com/grgrgre/site/main/assets/js/easter-egg.js
