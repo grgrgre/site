@@ -1,5 +1,5 @@
 /* SvityazHOME service worker */
-const SW_VERSION = 'svh-sw-20260304-1';
+const SW_VERSION = 'svh-sw-20260312-1';
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const PAGE_CACHE = `${SW_VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -7,7 +7,7 @@ const OFFLINE_URL = '/offline.html';
 const PRECACHE = [
   '/',
   '/offline.html',
-  '/assets/css/styles.min.css',
+  '/assets/css/site.css',
   '/assets/js/app.js',
   '/manifest.json',
 ];
